@@ -1,0 +1,260 @@
+openapi: '3.0.2'
+info:
+  title: CO2 Emissions API.
+  version: '1.0'
+  description: |
+    Design API for a web application used to see and update a database related to CO2
+    and greenhouose gases emissions.
+
+servers:
+  - url: http://localhost:8080
+    description: Spring Boot backend implementation.
+
+components:
+  schemas:
+
+    Country:
+      type: object
+      required:
+        - "name"
+        - "ISO"
+      properties:
+        name:
+          type: string
+        ISO:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CountryData"
+
+    CountrySummary:
+      type: object
+      required:
+        - "name"
+        - "ISO"
+      properties:
+        name:
+          type: string
+        ISO:
+          type: string
+
+    CountryData:
+      type: object
+      required:
+        - "year"
+      properties:
+        year:
+          type: integer
+        population:
+          type: integer
+        GDP:
+          type: number
+        emissionData:
+          $ref: "#/components/schemas/EmissionData"
+        temperatureData:
+          $ref: "#/components/schemas/TemperatureData"
+        energyData:
+          $ref: "#/components/schemas/EnergyData"
+        
+
+    EmissionData:
+      type: object
+      properties:
+        CO2:
+          type: number
+        CH4:
+          type: number
+        N20:
+          type: number
+        total_ghg:
+          type: number
+    
+    TemperatureData:
+      type: object
+      properties:
+        shares_of_temp_change_from_ghg:
+          type: number
+        temperature_change_CH4:
+          type: number
+        temperature_change_N20:
+          type: number
+        temperature_change_CO2:
+          type: number
+        temperature_change_ghg:
+          type: number
+
+    EnergyData:
+      type: object
+      properties:
+        energy_per_cap:
+          type: number
+        energy_per_ghg:
+          type: number
+
+  responses:
+    BadRequest:
+      description: Request was not well-formed, see error details
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request
+
+    NotFound:
+      description: Resource not found
+
+    NoResults:
+      description: List empty; no results
+
+    ServerError:
+      description: Server error; no results, try again later
+
+paths:
+  /countries:
+    get:
+      tags:
+        - Countries
+      description: Retrieves a list of countries (maybe filtered).
+      responses:
+        "200":
+          description: "Successful"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref : "#components/schemas/CountrySummary"
+            text/csv: {} 
+
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+
+  /countries/{ISO}:
+    parameters:
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+    get:
+      tags:
+        - Countries
+      summary: ""
+      description: ""
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Countries
+      summary: Update a Country
+      description: Updates the Conutry with the given id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Country"
+      responses:
+        '200':
+          description: "Country updated, returns the new state"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+  /contries/{ISO}/emissionsData:
+    parameters:
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+    get:
+      tags:
+        - Countries
+      summary: ""
+      description: ""
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+  /continents:
+
+    get:
+      summary: ""
+      description: ""
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items: #should be strings here
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+        
+
+                
+          
+    
