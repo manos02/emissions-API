@@ -1,0 +1,140 @@
+Country:
+  type: object
+  required:
+    - "name"
+    - "ISO"
+  properties:
+    name:
+      type: string
+    ISO:
+      type: string
+    data:
+        type: array
+        items:
+          $ref: "#/Data"
+
+Continent:
+  type: object
+  required:
+    - "name"
+  properties:
+    name:
+      type: string
+    data:
+      type: array
+      items:
+        $ref: "#/Data"
+
+CountrySummary:
+  type: object
+  required:
+    - "name"
+    - "ISO"
+  properties:
+    name:
+      type: string
+    ISO:
+      type: string
+
+ContinentSummary:
+  type: object
+  required:
+    - "name"
+  properties:
+    name:
+      type: string
+
+Data:
+  type: object
+  required:
+    - "year"
+  properties:
+    year:
+      type: integer
+    generalData:
+      $ref: "#/GeneralData"
+    emissionData:
+      $ref: "#/EmissionData"
+    temperatureData:
+      $ref: "#/TemperatureData"
+    energyData:
+      $ref: "#/EnergyData"
+        
+DataSummary:
+  type: object
+  properties:
+    generalData:
+      type: string
+    emissionData:
+      type: string
+    temperatureData:
+      type: string
+    energyData:
+      type: string
+        
+GeneralData:
+  type: object
+  properties:
+    population:
+      type: integer
+    GDP:
+      type: number
+    ownerName:
+      type: string
+
+EmissionData:
+  type: object
+  properties:
+    CO2:
+      type: number
+    CH4:
+      type: number
+    N20:
+      type: number
+    total_ghg:
+      type: number
+    ownerName:
+      type: string
+    
+TemperatureData:
+  type: object
+  properties:
+    shares_of_temp_change_from_ghg:
+      type: number
+    temperature_change_CH4:
+      type: number
+    temperature_change_N20:
+      type: number
+    temperature_change_CO2:
+      type: number
+    temperature_change_ghg:
+      type: number
+    ownerName:
+      type: string
+
+EnergyData:
+  type: object
+  properties:
+    energy_per_cap:
+      type: number
+    energy_per_ghg:
+      type: number
+    ownerName:
+      type: string
+
+CountryFilterKeysAlpha:
+      type: string
+      enum:
+        - ISO
+        - name
+
+CountryFilterKeysNum:
+      type: int
+      enum:
+        - population
+        - shares_of_temp_change_from_ghg
+
+DataFilterKeys:
+      type: int
+      enum:
+        - year

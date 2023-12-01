@@ -12,113 +12,104 @@ servers:
 
 components:
   schemas:
-
-    Country:
-      type: object
-      required:
-        - "name"
-        - "ISO"
-      properties:
-        name:
-          type: string
-        ISO:
-          type: string
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/CountryData"
-
-    CountrySummary:
-      type: object
-      required:
-        - "name"
-        - "ISO"
-      properties:
-        name:
-          type: string
-        ISO:
-          type: string
-
-    CountryData:
-      type: object
-      required:
-        - "year"
-      properties:
-        year:
-          type: integer
-        population:
-          type: integer
-        GDP:
-          type: number
-        emissionData:
-          $ref: "#/components/schemas/EmissionData"
-        temperatureData:
-          $ref: "#/components/schemas/TemperatureData"
-        energyData:
-          $ref: "#/components/schemas/EnergyData"
-        
-
-    EmissionData:
-      type: object
-      properties:
-        CO2:
-          type: number
-        CH4:
-          type: number
-        N20:
-          type: number
-        total_ghg:
-          type: number
-    
-    TemperatureData:
-      type: object
-      properties:
-        shares_of_temp_change_from_ghg:
-          type: number
-        temperature_change_CH4:
-          type: number
-        temperature_change_N20:
-          type: number
-        temperature_change_CO2:
-          type: number
-        temperature_change_ghg:
-          type: number
-
-    EnergyData:
-      type: object
-      properties:
-        energy_per_cap:
-          type: number
-        energy_per_ghg:
-          type: number
+    $ref: "schemas.yaml"
 
   responses:
-    BadRequest:
-      description: Request was not well-formed, see error details
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error-message:
-                type: string
-                description: Error message detailing the problem with the request
+    $ref: "reponses.yaml"
 
-    NotFound:
-      description: Resource not found
+  parameters:
+    order-by-alpha:
+      name: order-by-alpha
+      in: query
+      required: false
+      description: The column to order the result data by alphabetically
+      schema:
+        $ref: "#/components/schemas/CountryFilterKeysAlpha"
 
-    NoResults:
-      description: List empty; no results
+    order-by-num:
+      name: order-by-num
+      in: query
+      required: false
+      description: The column to order the result data by numbers
+      schema:
+        $ref: "#/components/schemas/CountryFilterKeysNum"
 
-    ServerError:
-      description: Server error; no results, try again later
+    order-dir:
+      name: order-dir
+      in: query
+      required: false
+      description: The directorion to order the indicated column
+      schema:
+        type: string
+        enum:
+          - desc
+          - asc
+
+    order-by-year:
+      name: order-by-year
+      in: query
+      required: false
+      description: The column to order the result data by years
+      schema:
+        $ref: "#/components/schemas/DataFilterKeys"
+
+    limit:
+      name: limit
+      in: query
+      required: true
+      description: Limit the number of returned items
+      schema:
+        type: integer
+        maximum: 100
+
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: The number of items to skip before returning {limit} items
+      schema:
+        type: integer
 
 paths:
   /countries:
     get:
       tags:
         - Countries
-      description: Retrieves a list of countries (maybe filtered).
+      summary: Retrives a list of countries.
+      description: Retrieves a list of countries (their name and ISO code).
+      parameters:
+        - $ref: "#/components/parameters/order-by-alpha"
+        - $ref: "#/components/parameters/order-by-num"
+        - $ref: "#/components/parameters/order-dir"
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CountrySummary"
+            text/csv: {} 
+
+        '204':
+          $ref: "#/components/responses/NoResults"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{ISO}/:
+    get:
+      tags:
+        - Countries
+      summary: Retrives the summary of a country.
+      description: Retrieves the summary of a specific country. The country is picked based on ISO code.
       responses:
         "200":
           description: "Successful"
@@ -139,9 +130,68 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
+    post:
+        tags:
+          - Countries
+        summary: Creates a new country data entry.
+        description: Creates a new data entry for a country, specified by ISO code.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Data"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  type: integer
+                  description: The year of the newly created data.
 
+          '400':
+            $ref: '#/components/responses/BadRequest'
 
-  /countries/{ISO}:
+          '409':
+            description: Entry with the same year already exists
+
+          '5XX':
+            $ref: '#/components/responses/ServerError'
+
+  /countries/{ISO}/generalData:
+    parameters: 
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+        
+    get: 
+      tags: 
+        - Countries
+      summary: Retrives a list of years for General Data
+      description: Retrives the list of years in which this country has a General Data. The selected country is based on the ISO Code.
+      responses: 
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{ISO}/generalData/{year}:
     parameters:
       - name: ISO
         in: path
@@ -149,18 +199,26 @@ paths:
         description: ISO of the country
         schema:
           type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the GeneralData
+        schema:
+          type: integer
+
+      
     get:
       tags:
         - Countries
-      summary: ""
-      description: ""
+      summary: Retrieves the General Data for a country.
+      description: Retrives the General Data for a contry (based on ISO) in a specific year.
       responses:
         '200':
           description: ""
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Country"
+                $ref: "#/components/schemas/GeneralData"
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -174,21 +232,21 @@ paths:
     put:
       tags:
         - Countries
-      summary: Update a Country
-      description: Updates the Conutry with the given id
+      summary: Update General Data for a country.
+      description: Updates the General Data for a country (based on ISO) in a specific year.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Country"
+              $ref: "#/components/schemas/GeneralData"
       responses:
         '200':
-          description: "Country updated, returns the new state"
+          description: Country updated, returns the new state
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Country"
+                $ref: "#/components/schemas/GeneralData"
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -198,6 +256,31 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Countries
+      summary: Delete General Data for a country.
+      description: Delete the General Data for a country (based on ISO) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneralData"
+      responses:
+        '204':
+          description: "deleted data for a country"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
 
 
   /contries/{ISO}/emissionsData:
@@ -211,8 +294,10 @@ paths:
     get:
       tags:
         - Countries
-      summary: ""
-      description: ""
+      summary: Retrieve emmision data
+      description: Retrieves emmission data with from specified country
+      parameters: 
+        - $ref: "#/components/parameters/order-by-alpha"
       responses:
         '200':
           description: ""
@@ -234,8 +319,10 @@ paths:
   /continents:
 
     get:
-      summary: ""
-      description: ""
+      tags:
+        - Continents
+      summary: Retrieves a list of continents
+      description: Retrieves a list of conttinents with their name and data
       responses:
         '200':
           description: ""
@@ -243,7 +330,8 @@ paths:
             application/json:
               schema:
                 type: array
-                items: #should be strings here
+                items:
+                  $ref: "#/components/schemas/ContinentSummary"
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -253,8 +341,149 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
-        
 
-                
+
+  /continents/{name}:
+
+    get:
+      tags:
+        - Continents
+      summary: "Retrieves a continent"
+      description: "Retrieves a continent with specified name"
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/DataSummary"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+  /continents/{name}/temperatureData:
+
+    get:
+      tags:
+        - Continents
+      summary: "Retrieves temperature data"
+      description: "Retrieves temperature data for a specified continent"
+      parameters: 
+        - $ref: "#/components/parameters/order-by-alpha"
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/TemperatureData"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
           
-    
+  /years:
+    get: 
+      tags: 
+        - Years
+      summary: Retrieves list of years 
+      description: Retrieves list of years with avalible data
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'  
+
+  /years/{year}:
+    parameters:
+      - name: year
+        in: path
+        required: true
+        description: specific year
+        schema:
+          type: integer
+
+    get: 
+      tags: 
+        - Years
+      summary: Retrieves data avalible for specific year 
+      description: Retrieves data avalible for specific year
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSummary"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'           
+          
+  /years/{year}/energyData:
+    parameters:
+      - name: year
+        in: path
+        required: true
+        description: specific year
+        schema:
+          type: integer
+
+    get: 
+      tags: 
+        - Years
+      summary: Retrieves Energy Data 
+      description: Retrieves Energy Data for a specific year
+      parameters:
+        - $ref: "#/components/parameters/order-by-num"
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EnergyData"
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'           
+          

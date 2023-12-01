@@ -1,0 +1,19 @@
+BadRequest:
+  description: Request was not well-formed, see error details
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error-message:
+            type: string
+            description: Error message detailing the problem with the request
+
+NotFound:
+  description: Resource not found
+
+NoResults:
+  description: List empty; no results
+
+ServerError:
+  description: Server error; no results, try again later
