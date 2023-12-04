@@ -81,19 +81,24 @@ paths:
         - $ref: "#/components/parameters/order-by-alpha"
         - $ref: "#/components/parameters/order-by-num"
         - $ref: "#/components/parameters/order-dir"
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
       
       responses:
         "200":
-          description: Successful
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/CountrySummary"
-            text/csv: {} 
+            text/csv:
+              schema:
+                $ref: "#components/schemas/CountrySummary"
+              example: |-
+                name,ISO
+                string, string 
 
         '204':
           $ref: "#/components/responses/NoResults"
@@ -112,14 +117,18 @@ paths:
       description: Retrieves the summary of a specific country. The country is picked based on ISO code.
       responses:
         "200":
-          description: "Successful"
+          description: Successful retrieval
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref : "#components/schemas/CountrySummary"
-            text/csv: {} 
+                $ref : "#components/schemas/CountrySummary"
+            text/csv:
+              schema:
+                $ref: "#components/schemas/Country"
+              example: |-
+                name,ISO
+                string,string
+
 
         '204':
           $ref: "#/components/responses/NoResults"
@@ -149,6 +158,12 @@ paths:
                 schema:
                   type: integer
                   description: The year of the newly created data.
+              text/csv:
+                schema:
+                  type: integer
+                  example: |-
+                    year
+                    2000
 
           '400':
             $ref: '#/components/responses/BadRequest'
@@ -175,13 +190,24 @@ paths:
       description: Retrives the list of years in which this country has a General Data. The selected country is based on the ISO Code.
       responses: 
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: integer
+            text/csv:
+              schema:
+                type: array
+                items:
+                  type: integer
+              example: |-
+                years
+                1990
+                1991
+                1992
+
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -214,11 +240,18 @@ paths:
       description: Retrives the General Data for a contry (based on ISO) in a specific year.
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeneralData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/GeneralData"
+              example: |-
+                population,GDP,ownerName
+                0,0,string
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -247,6 +280,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeneralData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+              example: |-
+                population,GDP,ownerName
+                0,0,string
+
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -270,7 +310,7 @@ paths:
               $ref: "#/components/schemas/GeneralData"
       responses:
         '204':
-          description: "deleted data for a country"
+          description: "Deleted data for a country"
           
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -300,11 +340,18 @@ paths:
         - $ref: "#/components/parameters/order-by-alpha"
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/EmissionData"
+            text/csv:
+              schema:
+                $ref: "#components/schemas/GeneralData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -317,22 +364,28 @@ paths:
 
 
   /continents:
-
     get:
       tags:
         - Continents
       summary: Retrieves a list of continents
-      description: Retrieves a list of conttinents with their name and data
+      description: Retrieves a list of continents with their name and data
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/ContinentSummary"
-
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContinentSummary"
+              example: |-
+                name
+                string
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -352,11 +405,17 @@ paths:
       description: "Retrieves a continent with specified name"
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                   $ref: "#/components/schemas/DataSummary"
+            text/csv:
+              schema:
+                 $ref: "#/components/schemas/DataSummary"
+              example: |-
+                generalData,emissionData,temperatureData,energyData
+                string,string,string,string
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -379,11 +438,18 @@ paths:
         - $ref: "#/components/parameters/order-by-alpha"
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                   $ref: "#/components/schemas/TemperatureData"
+            text/csv:
+              schema:
+                  $ref: "#/components/schemas/TemperatureData"
+              example: |-
+                shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
+                0,0,0,0,0,string
+
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -402,13 +468,20 @@ paths:
       description: Retrieves list of years with avalible data
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   type: integer
+            text/csv:
+              example: |-
+                years
+                1990
+                1991
+                1992
+
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -435,13 +508,21 @@ paths:
       description: Retrieves data avalible for specific year
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/DataSummary"
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DataSummary"
+              example: |-
+                generalData,emissionData,temperatureData,energyData
+                string,string,string,string
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -470,13 +551,21 @@ paths:
         - $ref: "#/components/parameters/order-by-num"
       responses:
         '200':
-          description: ""
+          description: Successful retrieval
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/EnergyData"
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EnergyData"
+              example: |-
+                energy_per_cap,energy_per_ghg,ownerName
+                0,0,string
 
         '400':
           $ref: '#/components/responses/BadRequest'
