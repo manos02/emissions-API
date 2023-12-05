@@ -53,6 +53,14 @@ components:
       schema:
         $ref: "#/components/schemas/DataFilterKeys"
 
+    order-by-specific-year:
+      name: order-by-specific-year
+      in: path
+      required: true
+      description: Data for a specific year
+      schema:
+        $ref: "#/components/schemas/DataFilterKeys"
+
     limit:
       name: limit
       in: query
@@ -98,7 +106,7 @@ paths:
                 $ref: "#components/schemas/CountrySummary"
               example: |-
                 name,ISO
-                string, string 
+                string,string 
 
         '204':
           $ref: "#/components/responses/NoResults"
@@ -121,13 +129,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref : "#components/schemas/CountrySummary"
+                $ref : "#components/schemas/Country"
             text/csv:
               schema:
                 $ref: "#components/schemas/Country"
               example: |-
-                name,ISO
-                string,string
+                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
+                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
 
 
         '204':
@@ -182,6 +190,7 @@ paths:
         description: ISO of the country
         schema:
           type: string
+      - $ref: "#/components/parameters/order-by-specific-year"
         
     get: 
       tags: 
@@ -196,17 +205,17 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
+                  $ref: "#/components/schemas/GeneralData" 
+
             text/csv:
               schema:
                 type: array
                 items:
                   type: integer
               example: |-
-                years
-                1990
-                1991
-                1992
+                population,GDP,ownerName
+                0,0,string
+  
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -323,7 +332,7 @@ paths:
 
 
 
-  /contries/{ISO}/emissionsData:
+  /countries/{ISO}/emissionsData:
     parameters:
       - name: ISO
         in: path
@@ -344,7 +353,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EmissionData"
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionData"
             text/csv:
               schema:
                 $ref: "#components/schemas/GeneralData"
@@ -575,4 +586,8 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'           
-          
+
+
+
+# NOTES:
+# - USE -, instead of _ or camelCase for URIs
