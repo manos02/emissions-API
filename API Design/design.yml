@@ -117,7 +117,14 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /countries/{ISO}/:
+  /countries/{ISO}:
+    parameters: 
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
     get:
       tags:
         - Countries
@@ -157,15 +164,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Data"
+                $ref: "#/components/schemas/CountrySummary"
         responses:
           '201':
             description: Country data successfully created
             content:
               application/json:
                 schema:
-                  type: integer
-                  description: The year of the newly created data.
+                  $ref: "#/components/schemas/CountrySummary"
               text/csv:
                 schema:
                   type: integer
@@ -225,6 +231,8 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
+
+  
 
   /countries/{ISO}/generalData/{year}:
     parameters:
@@ -311,12 +319,7 @@ paths:
         - Countries
       summary: Delete General Data for a country.
       description: Delete the General Data for a country (based on ISO) in a specific year.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GeneralData"
+      
       responses:
         '204':
           description: "Deleted data for a country"
@@ -329,6 +332,32 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Countries
+        summary: Creates new General Data
+        description: Creates General Data for a country given ISO and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/GeneralData"
+                  description: The year of the newly created data.
+              text/csv:
+                schema:
+                  type: integer
+                  example: |-
+                    population,GDP,ownerName
+                    0,0,string
 
 
 
@@ -373,6 +402,378 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
+  /countries/{ISO}/emissionData/{year}:
+    parameters:
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the emissionData
+        schema:
+          type: integer
+
+      
+    get:
+      tags:
+        - Countries
+      summary: Retrieves the Emission Data for a country.
+      description: Retrives the Emission Data for a contry (based on ISO) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Countries
+      summary: Update Emission Data for a country.
+      description: Updates the Emission Data for a country (based on ISO) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionData"
+      responses:
+        '200':
+          description: Country updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Countries
+      summary: Delete Emission Data for a country.
+      description: Delete the Emission Data for a country (based on ISO) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a country"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Countries
+        summary: Creates new Emission Data
+        description: Creates Emission Data for a country given ISO and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                  description: The newly created Data.
+              text/csv:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                example: |-
+                  CO2,CH4,N20,total_ghg,ownerName
+                  0,0,0,0,string
+
+  /countries/{ISO}/temperatureData/{year}:
+    parameters:
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the temperature data
+        schema:
+          type: integer
+
+      
+    get:
+      tags:
+        - Countries
+      summary: Retrieves the temperature data for a country.
+      description: Retrives the temperature data for a contry (based on ISO) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemperatureData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/TemperatureData"
+              example: |-
+                shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
+                0,0,0,0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Countries
+      summary: Update Temperature Data for a country.
+      description: Updates the Temperature Data for a country (based on ISO) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TemperatureData"
+      responses:
+        '200':
+          description: Country updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemperatureData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/TemperatureData"
+              example: |-
+                shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
+                0,0,0,0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Countries
+      summary: Delete Temperature Data for a country.
+      description: Delete the Temperature Data for a country (based on ISO) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a country"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Countries
+        summary: Creates new Emission Data for a country.
+        description: Creates Emission Data for a country given ISO and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemperatureData"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/TemperatureData"
+                  description: The newly created data
+              text/csv:
+                schema:
+                  $ref: "#/components/schemas/TemperatureData"
+                example: |-
+                  shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
+                  0,0,0,0,0,string
+
+  /countries/{ISO}/energyData/{year}:
+    parameters:
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the energy data
+        schema:
+          type: integer
+
+      
+    get:
+      tags:
+        - Countries
+      summary: Retrieves the energy data for a country.
+      description: Retrives the energy data for a contry (based on ISO) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnergyData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/EnergyData"
+              example: |-
+                energy_per_cap,energy_per_ghg,ownerName
+                0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Countries
+      summary: Update energy Data for a country.
+      description: Updates the energy Data for a country (based on ISO) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnergyData"
+      responses:
+        '200':
+          description: Country updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnergyData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/EnergyData"
+              example: |-
+                energy_per_cap,energy_per_ghg,ownerName
+                0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Countries
+      summary: Delete Energy Data for a country.
+      description: Delete the Energy Data for a country (based on ISO) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a country"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Countries
+        summary: Creates new Energy Data for a country.
+        description: Creates Energy Data for a country given ISO and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnergyData"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/EnergyData"
+                  description: The newly created data
+              text/csv:
+                schema:
+                  $ref: "#/components/schemas/EnergyData"
+                example: |-
+                  shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
+                  0,0,0,0,0,string
 
   /continents:
     get:
@@ -406,6 +807,91 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
+  /countries/{ISO}/full-data:
+    get:
+      parameters: 
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+      tags:
+        - Countries
+      summary: "Retrieves a country's full data"
+      description: "Retrieves a country's full data with a specified ISO."
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Data"
+            text/csv:
+              schema:
+                 $ref: "#/components/schemas/Data"
+              example: |-
+                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
+                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /countries/{ISO}/full-data/{year}:
+    parameters: 
+      - name: ISO
+        in: path
+        required: true
+        description: ISO of the country
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the data
+        schema:
+          type: string
+    get:
+      tags:
+        - Countries
+      summary: "Retrieves a country's full data"
+      description: "Retrieves a country's full data with a specified ISO and given year."
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/Data"
+            text/csv:
+              schema:
+                 $ref: "#/components/schemas/Data"
+              example: |-
+                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
+                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+    
+
 
   /continents/{name}:
 
@@ -438,13 +924,192 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 
-  /continents/{name}/temperatureData:
+  /continents/{name}/generalData:
+    parameters: 
+      - name: name
+        in: path
+        required: true
+        description: name of the continent
+        schema:
+          type: string
+      - $ref: "#/components/parameters/order-by-specific-year"
+        
+    get: 
+      tags: 
+        - Continents
+      summary: Retrives a list of years for General Data
+      description: Retrives the list of years in which this country has a General Data.
+      responses: 
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeneralData" 
 
+            text/csv:
+              schema:
+                type: array
+                items:
+                  type: integer
+              example: |-
+                population,GDP,ownerName
+                0,0,string
+  
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  
+
+  /continents/{name}/generalData/{year}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: name of the continent
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the GeneralData
+        schema:
+          type: integer
+
+      
     get:
       tags:
         - Continents
-      summary: "Retrieves temperature data"
-      description: "Retrieves temperature data for a specified continent"
+      summary: Retrieves the General Data for a continent.
+      description: Retrives the General Data for a continent (based on name) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/GeneralData"
+              example: |-
+                population,GDP,ownerName
+                0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Continent
+      summary: Update General Data for a continent.
+      description: Updates the General Data for a continent (based on name) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneralData"
+      responses:
+        '200':
+          description: continent updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+              example: |-
+                population,GDP,ownerName
+                0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Continent
+      summary: Delete General Data for a continent.
+      description: Delete the General Data for a continent (based on name) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a continent"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Continent
+        summary: Creates new General Data
+        description: Creates General Data for a continent given ISO and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneralData"
+        responses:
+          '201':
+            description: Country data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/GeneralData"
+                  description: The year of the newly created data.
+              text/csv:
+                schema:
+                  type: integer
+                  example: |-
+                    population,GDP,ownerName
+                    0,0,string
+
+
+
+  /continents/{name}/emissionsData:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: name of the continent
+        schema:
+          type: string
+    get:
+      tags:
+        - Continents
+      summary: Retrieve emmision data
+      description: Retrieves emmission data with from specified continent
       parameters: 
         - $ref: "#/components/parameters/order-by-alpha"
       responses:
@@ -453,13 +1118,15 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/TemperatureData"
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionData"
             text/csv:
               schema:
-                  $ref: "#/components/schemas/TemperatureData"
+                $ref: "#components/schemas/GeneralData"
               example: |-
-                shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
-                0,0,0,0,0,string
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
 
 
         '400':
@@ -470,6 +1137,256 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
+
+  /continents/{name}/emissionData/{year}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: name of the continent
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the emissionData
+        schema:
+          type: integer
+
+      
+    get:
+      tags:
+        - Continents
+      summary: Retrieves the Emission Data for a continent.
+      description: Retrives the Emission Data for a continent (based on name) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Continents
+      summary: Update Emission Data for a continent.
+      description: Updates the Emission Data for a continent (based on name) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionData"
+      responses:
+        '200':
+          description: continent updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Continents
+      summary: Delete Emission Data for a continent.
+      description: Delete the Emission Data for a continent (based on name) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a continent"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Continents
+        summary: Creates new Emission Data
+        description: Creates Emission Data for a continent given name and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+        responses:
+          '201':
+            description: continent data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                  description: The year of the newly created data.
+              text/csv:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                example: |-
+                  CO2,CH4,N20,total_ghg,ownerName
+                  0,0,0,0,string
+
+  /continents/{name}/temperatureData/{year}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: name of the continent
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        description: year of the temperature data
+        schema:
+          type: integer
+
+      
+    get:
+      tags:
+        - Continents
+      summary: Retrieves the temperature data for a continent.
+      description: Retrives the temperature ata for a continent (based on name) in a specific year.
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+
+            text/csv:
+              schema:
+                $ref: "#components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref:  "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Continents
+      summary: Update Emission Data for a continent.
+      description: Updates the Emission Data for a continent (based on name) in a specific year.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmissionData"
+      responses:
+        '200':
+          description: continent updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+              example: |-
+                CO2,CH4,N20,total_ghg,ownerName
+                0,0,0,0,string
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Continents
+      summary: Delete Emission Data for a continent
+      description: Delete the Emission Data for a continent (based on name) in a specific year.
+      
+      responses:
+        '204':
+          description: "Deleted data for a continent"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+        tags:
+          - Continents
+        summary: Creates new Emission Data
+        description: Creates Emission Data for a continent given name and a specific year
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmissionData"
+        responses:
+          '201':
+            description: continent data successfully created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                  description: The year of the newly created data.
+              text/csv:
+                schema:
+                  $ref: "#/components/schemas/EmissionData"
+                example: |-
+                  CO2,CH4,N20,total_ghg,ownerName
+                  0,0,0,0,string
           
   /years:
     get: 
