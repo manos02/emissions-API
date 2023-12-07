@@ -188,6 +188,59 @@ paths:
           '5XX':
             $ref: '#/components/responses/ServerError'
 
+    put:
+      tags:
+        - Countries
+      summary: Update information about a country.
+      description: Updates the information about a specific country, based on its ISO.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CountrySummary"
+      responses:
+        '200':
+          description: Country updated, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountrySummary"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/CountrySummary"
+              example: |-
+                population,GDP,ownerName
+                0,0,string
+
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Countries
+      summary: Deletes a country.
+      description: Deletes a specific country, based on ISO.     
+      responses:
+        '204':
+          description: "Deleted a country"
+          
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
   /countries/{ISO}/generalData:
     parameters: 
       - name: ISO
