@@ -3,7 +3,7 @@ package com.group25.webapp.model;
 /**
  * The class for temperature data.
  */
-public class TemperatureData implements Data{
+public class TemperatureData implements Data {
     private Long shares;
     private Long change_ch4;
     private Long change_n20;

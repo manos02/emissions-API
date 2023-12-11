@@ -3,7 +3,7 @@ package com.group25.webapp.model;
 /**
  * The class for general data.
  */
-public class GeneralData implements Data{
+public class GeneralData implements Data {
     private Long population;
     private Long gdp;
 

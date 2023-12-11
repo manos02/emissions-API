@@ -3,7 +3,7 @@ package com.group25.webapp.model;
 /**
  * The Class for EmissionData
  */
-public class EmissionData implements Data{
+public class EmissionData implements Data {
     private Long co2;
     private Long ch4;
     private Long n20;

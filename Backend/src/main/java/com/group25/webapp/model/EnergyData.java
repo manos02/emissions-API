@@ -3,7 +3,7 @@ package com.group25.webapp.model;
 /**
  * The class for EnergyData.
  */
-public class EnergyData implements Data{
+public class EnergyData implements Data {
     private Long energy_per_cap;
     private Long energy_per_ghg;
 
