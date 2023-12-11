@@ -1,8 +1,13 @@
 package com.group25.webapp;
 
 import com.group25.webapp.model.CountryRepository;
+import com.group25.webapp.model.GeneralData;
+import com.group25.webapp.util.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The controller for countries.
@@ -24,7 +29,9 @@ public class CountriesController {
     @GetMapping("/countries")
     public String countriesGet(@RequestParam(required = false) String filter, @RequestParam(required = false) String order,
                         @RequestParam(required = false) Integer limit, @RequestParam(required = false) Integer offset){
-        return countryRepository.findAll().toString();
+        //return countryRepository.findById(1).get().getCountry();
+        //return countryRepository.findByISO("AFG").get(0).getCountry();
+        return countryRepository.findDistinctISO().get(3);
     }
 
     /**
@@ -34,7 +41,7 @@ public class CountriesController {
      */
     @GetMapping("/countries/{ISO}")
     public String countryISOGet(@PathVariable String ISO){
-        return "ISOs";
+        return countryRepository.findFirstByISO(ISO).getCountry();
     }
 
     /**
@@ -79,7 +86,13 @@ public class CountriesController {
     @GetMapping("/countries/{ISO}/general-data")
     public String generalDataGet(@PathVariable String ISO, @RequestParam(required = false) Integer lowerLimit,
                                  @RequestParam(required = false) Integer upperLimit){
-        return "something";
+        List<GeneralData> generalDataList = new ArrayList<>();
+
+        for(var it : countryRepository.findByISO(ISO)){
+            generalDataList.add(it.getGeneralData());
+        }
+
+        return JSON.toJson(generalDataList);
     }
     @GetMapping("/countries/{ISO}/energy-data")
     public String energyDataGet(@PathVariable String ISO, @RequestParam(required = false) Integer lowerLimit,
