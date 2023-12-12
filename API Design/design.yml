@@ -1073,7 +1073,7 @@ paths:
       tags: 
         - Continents
       summary: Retrives a list of years for General Data
-      description: Retrives the list of years in which this country has a General Data.
+      description: Retrives the list of years in which this continent has a General Data.
       responses: 
         '200':
           description: Successful retrieval

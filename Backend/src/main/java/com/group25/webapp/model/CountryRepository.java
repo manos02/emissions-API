@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
+/**
+ * The repository interface for countries.
+ */
 @Repository
 public interface CountryRepository extends JpaRepository<CountryEntity, Integer> {
 
@@ -13,11 +16,8 @@ public interface CountryRepository extends JpaRepository<CountryEntity, Integer>
     @Query("SELECT DISTINCT ISO FROM CountryEntity")
     List<String> findDistinctISO();
 
-    @Query("SELECT DISTINCT country FROM CountryEntity")
+    @Query("SELECT DISTINCT name FROM CountryEntity")
     List<String> findDistinctCountry();
-
-//    @Query("SELECT * FROM CountryEntity WHERE ISO = iso_code")
-//    List<CountryEntity> findGeneralData(String iso_code);
 
     List<CountryEntity> findByISO(String iso_code);
 

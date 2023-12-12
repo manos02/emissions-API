@@ -1,47 +1,141 @@
 package com.group25.webapp.model;
 
-/**
- * The abstract class for any class that holds other data.
- */
-public abstract class DataHolder implements Data {
+import com.group25.webapp.model.dataView.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-    private EmissionData emissionData;
-    private EnergyData energyData;
-    private GeneralData generalData;
-    private TemperatureData temperatureData;
+@MappedSuperclass
+public abstract class DataHolder implements EnergyDataView, EmissionDataView, FullDataView, GeneralDataView,
+        TemperatureDataView, SummaryDataView {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE) @Getter
+    private Integer id;
+    @Getter @Setter @Column(name="country")
+    private String name;
+    @Getter @Setter
+    private Integer year;
+    @Getter @Setter @Column(name="iso_code")
+    private String ISO;
+    @Getter @Setter
+    private Long population;
+    @Getter @Setter
+    private Long gdp;
+    @Getter @Setter
+    private Long co2;
+    @Getter @Setter @Column(name="energy_per_capita")
+    private Long energycapita;
+    @Getter @Setter @Column(name="energy_per_gdp")
+    private Long energygdp;
+    @Getter @Setter
+    private Long methane;
+    @Getter @Setter @Column(name="nitrous_oxide")
+    private Long nitrousoxide;
+    @Getter @Setter @Column(name="share_of_temperature_change_from_ghg")
+    private Long shareghg;
+    @Getter @Setter @Column(name="temperature_change_from_ch4")
+    private Long temperaturech4;
+    @Getter @Setter @Column(name="temperature_change_from_co2")
+    private Long temperatureco2;
+    @Getter @Setter @Column(name="temperature_change_from_ghg")
+    private Long temperatureghg;
+    @Getter @Setter @Column(name="temperature_change_from_n2o")
+    private Long temperaturen2o;
+    @Getter @Setter @Column(name="total_ghg")
+    private Long totalghg;
 
+    @Override
+    public String getEnergyDataJSON() {
+        return getEnergyData().toJson();
+    }
+
+    @Override
+    public String getEmissionDataJSON() {
+        return getEmissionData().toJson();
+    }
+
+    @Override
+    public String getTemperatureDataJSON() {
+        return getTemperatureData().toJson();
+    }
+
+    @Override
+    public String getFullDataJSON() {
+        return getFullData().toJson();
+    }
+
+    @Override
+    public String getGeneralDataJSON() {
+        return getGeneralData().toJson();
+    }
 
     /**
-     * The constructor for DataHolder.
-     * @param emissionData the EmissionData
-     * @param energyData the EnergyData
-     * @param generalData the GeneralData
-     * @param temperatureData the TemperatureData
+     * The getter for the generalData for the country.
+     * @return generalData
      */
-    public DataHolder(EmissionData emissionData, EnergyData energyData,
-                      GeneralData generalData, TemperatureData temperatureData) {
-        this.emissionData = emissionData;
-        this.energyData = energyData;
-        this.generalData = generalData;
-        this.temperatureData = temperatureData;
+    public GeneralData getGeneralData(){
+        return new GeneralData(year, population, gdp);
     }
 
-//    /**
-//     * The getter for fullData.
-//     * @return FullData
-//     */
-//    public FullData getFullData() {
-//        return new FullData(emissionData, energyData, generalData, temperatureData);
-//    }
+    /**
+     * The getter for the energyData for the country.
+     * @return energyData
+     */
+    public EnergyData getEnergyData() {
+        return new EnergyData(year, energycapita, energygdp);
+    }
+
+    /**
+     * The getter for the emissionData for the country.
+     * @return emissionData
+     */
+    public EmissionData getEmissionData() {
+        return new EmissionData(year, co2, methane, nitrousoxide, totalghg);
+    }
+
+    /**
+     * The getter for the temperatureData for the country.
+     * @return temperatureData
+     */
+    public TemperatureData getTemperatureData() {
+        return new TemperatureData(year, shareghg, temperaturech4,
+                temperaturen2o, temperatureco2, temperatureghg);
+    }
+
+    /**
+     * Returns a data specified by type.
+     * @param dataType The type of the data (0 general, 1 emission, 2 energy, 3 temperature, 4 full)
+     * @return The specific data that was requested by dataType.
+     */
+    public Data retrieveDataByType(int dataType){
+        return switch (dataType) {
+            case 0 -> getGeneralData();
+            case 1 -> getEmissionData();
+            case 2 -> getEnergyData();
+            case 3 -> getTemperatureData();
+            case 4 -> getFullData();
+            default -> null;
+        };
+    }
+
+    /**
+     * The getter for the summaryData for the country.
+     * @return summaryData
+     */
+    public SummaryData getSummaryData(){
+        return new SummaryData(ISO, name);
+    }
 
     @Override
-    public String toJson() {
-        return null;
+    public String getSummaryDataJSON(){
+        return getSummaryData().toJson();
     }
 
-    @Override
-    public Data fromJson(String json) {
-        return null;
+    /**
+     * The getter for the full data for the country.
+     * @return fullData
+     */
+    public FullData getFullData() {
+        return new FullData(year, getEmissionData(), getEnergyData(), getGeneralData(), getTemperatureData());
     }
-
 }
