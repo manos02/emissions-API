@@ -1,11 +1,30 @@
 package com.group25.webapp.util;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Helper class for manipulating lists of any data type.
  */
 public class ListManipulation {
+
+    /**
+     * The method concats two arrays together.
+     * @param array1 first array
+     * @param array2 second array
+     * @return the concated array
+     * @param <T> the generics type
+     */
+    public static <T> List<T> concatWithCollection(List<T> array1, List<T> array2) {
+        List<T> resultList = new ArrayList<>(array1.size() + array2.size());
+        resultList.addAll(array1);
+        array2.removeAll(array1);
+        resultList.addAll(array2);
+
+        return resultList;
+    }
 
     /**
      * Applies an offset filter to a list, returning all the elements except the first n.

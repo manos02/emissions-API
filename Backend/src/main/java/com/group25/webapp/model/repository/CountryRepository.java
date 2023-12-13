@@ -1,5 +1,6 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.repository;
 
+import com.group25.webapp.model.CountryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,10 @@ public interface CountryRepository extends JpaRepository<CountryEntity, Integer>
     List<String> findDistinctCountry();
 
     List<CountryEntity> findByISO(String iso_code);
+
+    List<CountryEntity> findByYear(Integer year);
+
+    @Query("SELECT DISTINCT year FROM CountryEntity ")
+    List<Integer> findDistinctYear();
 
 }

@@ -1,6 +1,7 @@
 package com.group25.webapp.service;
 
 import com.group25.webapp.model.*;
+import com.group25.webapp.model.repository.ContinentRepository;
 import com.group25.webapp.util.JSON;
 import com.group25.webapp.util.ListManipulation;
 import org.springframework.beans.factory.annotation.Autowired;

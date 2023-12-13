@@ -1,7 +1,7 @@
 package com.group25.webapp.service;
 
 import com.group25.webapp.model.CountryEntity;
-import com.group25.webapp.model.CountryRepository;
+import com.group25.webapp.model.repository.CountryRepository;
 import com.group25.webapp.model.Data;
 import com.group25.webapp.model.SummaryData;
 import com.group25.webapp.util.JSON;
