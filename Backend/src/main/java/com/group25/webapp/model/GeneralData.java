@@ -18,6 +18,10 @@ public class GeneralData implements Data {
     @Getter @Setter
     private Integer year;
 
+    public GeneralData(){
+
+    }
+
     /**
      * The constructor for GeneralData.
      * @param population the population

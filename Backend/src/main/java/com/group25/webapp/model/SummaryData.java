@@ -6,48 +6,29 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * The class for summaryData.
  */
-public class SummaryData implements Data{
+public class SummaryData{
     @Getter @Setter
     private String ISO;
     @Getter @Setter
     private String name;
+    @Getter @Setter
+    private List<Data> data;
 
     /**
      * The constructor for SummaryData
      * @param ISO the iso
      * @param name the name of the data
      */
-    public SummaryData(String ISO, String name) {
+    public SummaryData(String ISO, String name, List<Data> data) {
         this.ISO = ISO;
         this.name = name;
+        this.data = data;
     }
 
-    @Override
-    public String toJson() {
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    @Override
-    public Data fromJson(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(json, this.getClass());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }

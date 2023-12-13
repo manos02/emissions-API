@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @MappedSuperclass
 public abstract class DataHolder implements EnergyDataView, EmissionDataView, FullDataView, GeneralDataView,
-        TemperatureDataView, SummaryDataView {
+        TemperatureDataView {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) @Getter
+    @GeneratedValue(strategy = GenerationType.AUTO) @Getter
     private Integer id;
     @Getter @Setter @Column(name="country")
     private String name;
@@ -69,6 +69,43 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
         return getGeneralData().toJson();
     }
 
+    public void setGeneralData(GeneralData generalData){
+        year= generalData.getYear();
+        population=generalData.getPopulation();
+        gdp=generalData.getGdp();
+    }
+
+    public void setEnergyData(EnergyData energyData){
+        year= energyData.getYear();
+        energycapita=energyData.getEnergy_per_cap();
+        energygdp=energyData.getEnergy_per_ghg();
+    }
+
+    public void setEmissionData(EmissionData emissionData){ //EmissionData(year, co2, methane, nitrousoxide, totalghg
+        year= emissionData.getYear();
+        methane=emissionData.getCh4();
+        co2=emissionData.getCo2();
+        nitrousoxide=emissionData.getN20();
+        totalghg=emissionData.getGhg();
+    }
+
+    public void setTemperatureData(TemperatureData temperatureData){
+        year= temperatureData.getYear();
+        shareghg=temperatureData.getShares();
+        temperaturech4=temperatureData.getChange_ch4();
+        temperaturen2o=temperatureData.getChange_n20();
+        temperatureco2=temperatureData.getChange_co2();
+        temperatureghg=temperatureData.getChange_ghg();
+    }
+
+    public void setFullData(FullData fullData){
+        year=fullData.getYear();
+        setTemperatureData(fullData.getTemperatureData());
+        setEmissionData(fullData.getEmissionData());
+        setEnergyData(fullData.getEnergyData());
+        setGeneralData(fullData.getGeneralData());
+    }
+
     /**
      * The getter for the generalData for the country.
      * @return generalData
@@ -107,8 +144,11 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
      * @param dataType The type of the data (0 general, 1 emission, 2 energy, 3 temperature, 4 full)
      * @return The specific data that was requested by dataType.
      */
-    public Data retrieveDataByType(int dataType){
-        return switch (dataType) {
+    public Data retrieveDataByType(Integer dataType){
+        if(dataType == null){
+            return getFullData();
+        }
+        return switch ((int)dataType) {
             case 0 -> getGeneralData();
             case 1 -> getEmissionData();
             case 2 -> getEnergyData();
@@ -117,19 +157,19 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
             default -> null;
         };
     }
-
-    /**
-     * The getter for the summaryData for the country.
-     * @return summaryData
-     */
-    public SummaryData getSummaryData(){
-        return new SummaryData(ISO, name);
-    }
-
-    @Override
-    public String getSummaryDataJSON(){
-        return getSummaryData().toJson();
-    }
+//
+//    /**
+//     * The getter for the summaryData for the country.
+//     * @return summaryData
+//     */
+//    public SummaryData getSummaryData(){
+//        return new SummaryData(ISO, name);
+//    }
+//
+//    @Override
+//    public String getSummaryDataJSON(){
+//        return getSummaryData().toJson();
+//    }
 
     /**
      * The getter for the full data for the country.

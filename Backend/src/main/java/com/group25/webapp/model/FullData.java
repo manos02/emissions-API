@@ -38,6 +38,31 @@ public class FullData implements Data {
         this.year = year;
     }
 
+    public FullData(){
+
+    }
+
+    public Long population(){
+        if(getGeneralData().getPopulation()==null){
+            return (long)-1;
+        }
+        return getGeneralData().getPopulation();
+    }
+
+    public Data retrieveDataByType(Integer dataType){
+        if(dataType == null){
+            return this;
+        }
+        return switch ((int)dataType) {
+            case 0 -> getGeneralData();
+            case 1 -> getEmissionData();
+            case 2 -> getEnergyData();
+            case 3 -> getTemperatureData();
+            case 4 -> this;
+            default -> null;
+        };
+    }
+
     @Override
     public String toJson() {
 

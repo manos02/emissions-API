@@ -1,6 +1,7 @@
 package com.group25.webapp.model.repository;
 
 import com.group25.webapp.model.CountryEntity;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,8 @@ import java.util.List;
 public interface CountryRepository extends JpaRepository<CountryEntity, Integer> {
 
     CountryEntity findFirstByISO(String iso_code);
+
+    CountryEntity findFirstByISOAndYear(String iso_code, Integer year);
 
     @Query("SELECT DISTINCT ISO FROM CountryEntity")
     List<String> findDistinctISO();

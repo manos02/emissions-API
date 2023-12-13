@@ -37,6 +37,10 @@ public class EmissionData implements Data {
         this.year = year;
     }
 
+    public EmissionData(){
+
+    }
+
     @Override
     public String toJson() {
 

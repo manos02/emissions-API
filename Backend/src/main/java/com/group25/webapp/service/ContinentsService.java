@@ -34,7 +34,7 @@ public class ContinentsService {
         List<String> nameList = continentRepository.findDistinctContinent();
 
         for (int i = 0; i < nameList.size(); i++) {
-            summaryDataList.add(new SummaryData(isoList.get(i), nameList.get(i)));
+            //summaryDataList.add(new SummaryData(isoList.get(i), nameList.get(i)));
         }
 
         return summaryDataList;
@@ -75,7 +75,8 @@ public class ContinentsService {
      */
     public String JSONContinentSummaryByName(String name) {
         ContinentEntity continent = continentRepository.findFirstByISO(name);
-        return JSON.toJson(continent.getSummaryData());
+        //return JSON.toJson(continent.getSummaryData());
+        return "something";
     }
 
 //    public String JSONContinentSpecificData(String name, int dataType) {

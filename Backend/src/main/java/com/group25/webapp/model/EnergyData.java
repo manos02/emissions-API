@@ -29,6 +29,10 @@ public class EnergyData implements Data {
         this.year = year;
     }
 
+    public EnergyData(){
+
+    }
+
     @Override
     public String toJson() {
 

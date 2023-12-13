@@ -8,4 +8,6 @@ public interface Data {
     String toJson();
     Data fromJson(String json);
 
+    Integer getYear();
+
 }

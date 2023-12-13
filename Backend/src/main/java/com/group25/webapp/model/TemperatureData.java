@@ -41,6 +41,10 @@ public class TemperatureData implements Data {
         this.year = year;
     }
 
+    public TemperatureData(){
+
+    }
+
     @Override
     public String toJson() {
 
