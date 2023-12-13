@@ -9,11 +9,55 @@ BadRequest:
             type: string
             description: Error message detailing the problem with the request
 
+    text/csv:
+      example: |-
+        error-message
+        string
+
 NotFound:
   description: Resource not found
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error-message:
+            type: string
+            description: Error message detailing the problem with the request
+
+    text/csv:
+      example: |-
+        error-message
+        string
 
 NoResults:
   description: List empty; no results
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error-message:
+            type: string
+            description: Error message detailing the problem with the request
+
+    text/csv:
+      example: |-
+        error-message
+        string
 
 ServerError:
-  description: Server error; no results, try again later
+  description: Server error; no result, try again later
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error-message:
+            type: string
+            description: Error message detailing the problem with the request
+
+    text/csv:
+      example: |-
+        error-message
+        string
