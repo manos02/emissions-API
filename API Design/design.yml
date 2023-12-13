@@ -188,60 +188,7 @@ paths:
           '5XX':
             $ref: '#/components/responses/ServerError'
 
-    put:
-      tags:
-        - Countries
-      summary: Update information about a country.
-      description: Updates the information about a specific country, based on its ISO.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CountrySummary"
-      responses:
-        '200':
-          description: Country updated, returns the new state
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CountrySummary"
-            text/csv:
-              schema:
-                $ref: "#/components/schemas/CountrySummary"
-              example: |-
-                population,GDP,ownerName
-                0,0,string
-
-
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-        '5XX':
-          $ref: '#/components/responses/ServerError'
-
-    delete:
-      tags:
-        - Countries
-      summary: Deletes a country.
-      description: Deletes a specific country, based on ISO.     
-      responses:
-        '204':
-          description: "Deleted a country"
-          
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-        '5XX':
-          $ref: '#/components/responses/ServerError'
-
-  /countries/{ISO}/generalData:
+  /countries/{ISO}/general-data:
     parameters: 
       - name: ISO
         in: path
@@ -287,7 +234,7 @@ paths:
 
   
 
-  /countries/{ISO}/generalData/{year}:
+  /countries/{ISO}/general-data/{year}:
     parameters:
       - name: ISO
         in: path
@@ -414,7 +361,7 @@ paths:
 
 
 
-  /countries/{ISO}/emissionsData:
+  /countries/{ISO}/emissions-data:
     parameters:
       - name: ISO
         in: path
@@ -455,7 +402,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /countries/{ISO}/emissionData/{year}:
+  /countries/{ISO}/emission-data/{year}:
     parameters:
       - name: ISO
         in: path
@@ -580,7 +527,7 @@ paths:
                   CO2,CH4,N20,total_ghg,ownerName
                   0,0,0,0,string
 
-  /countries/{ISO}/temperatureData:
+  /countries/{ISO}/temperature-data:
     parameters:
       - name: ISO
         in: path
@@ -623,7 +570,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /countries/{ISO}/temperatureData/{year}:
+  /countries/{ISO}/temperature-data/{year}:
     parameters:
       - name: ISO
         in: path
@@ -747,7 +694,7 @@ paths:
                   shares_of_temp_change_from_ghg,temperature_change_CH4,temperature_change_N20,temperature_change_CO2,temperature_change_ghg,ownerName
                   0,0,0,0,0,string
 
-  /countries/{ISO}/energyData:
+  /countries/{ISO}/energy-data:
     parameters:
       - name: ISO
         in: path
@@ -789,7 +736,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /countries/{ISO}/energyData/{year}:
+  /countries/{ISO}/energy-data/{year}:
     parameters:
       - name: ISO
         in: path
@@ -1059,7 +1006,7 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 
-  /continents/{name}/generalData:
+  /continents/{name}/general-data:
     parameters: 
       - name: name
         in: path
@@ -1073,7 +1020,7 @@ paths:
       tags: 
         - Continents
       summary: Retrives a list of years for General Data
-      description: Retrives the list of years in which this continent has a General Data.
+      description: Retrives the list of years in which this country has a General Data.
       responses: 
         '200':
           description: Successful retrieval
@@ -1105,7 +1052,7 @@ paths:
 
   
 
-  /continents/{name}/generalData/{year}:
+  /continents/{name}/general-data/{year}:
     parameters:
       - name: name
         in: path
@@ -1232,7 +1179,7 @@ paths:
 
 
 
-  /continents/{name}/emissionsData:
+  /continents/{name}/emissions-data:
     parameters:
       - name: name
         in: path
@@ -1273,7 +1220,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /continents/{name}/emissionData/{year}:
+  /continents/{name}/emission-data/{year}:
     parameters:
       - name: name
         in: path
@@ -1398,7 +1345,7 @@ paths:
                   CO2,CH4,N20,total_ghg,ownerName
                   0,0,0,0,string
 
-  /continents/{name}/temperatureData:
+  /continents/{name}/temperature-data:
     parameters:
       - name: name
         in: path
@@ -1441,7 +1388,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /continents/{name}/temperatureData/{year}:
+  /continents/{name}/temperature-data/{year}:
     parameters:
       - name: name
         in: path
@@ -1568,7 +1515,7 @@ paths:
 
 
 
-  /continents/{name}/energyData:
+  /continents/{name}/energy-data:
     parameters:
       - name: name
         in: path
@@ -1610,7 +1557,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /continents/{name}/energyData/{year}:
+  /continents/{name}/energy-data/{year}:
     parameters:
       - name: name
         in: path
@@ -1890,7 +1837,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'           
           
-  /years/{year}/generalData:
+  /years/{year}/general-data:
     parameters: 
       - name: year
         in: path
@@ -1934,7 +1881,7 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 
-  /years/{year}/emissionsData:
+  /years/{year}/emissions-data:
     parameters:
       - name: year
         in: path
@@ -1977,7 +1924,7 @@ paths:
 
   
 
-  /years/{year}/temperatureData:
+  /years/{year}/temperature-data:
     parameters:
       - name: year
         in: path
@@ -2023,7 +1970,7 @@ paths:
 
 
 
-  /years/{year}/energyData:
+  /years/{year}/energy-data:
     parameters:
       - name: year
         in: path
@@ -2107,5 +2054,3 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 
-# NOTES:
-# - USE -, instead of _ or camelCase for URIs
