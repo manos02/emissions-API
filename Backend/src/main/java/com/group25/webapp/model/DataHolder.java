@@ -9,7 +9,7 @@ import lombok.Setter;
 public abstract class DataHolder implements EnergyDataView, EmissionDataView, FullDataView, GeneralDataView,
         TemperatureDataView {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) @Getter
+    @GeneratedValue(strategy = GenerationType.IDENTITY) @Getter
     private Integer id;
     @Getter @Setter @Column(name="country")
     private String name;
