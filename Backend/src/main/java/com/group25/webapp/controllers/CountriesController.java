@@ -1,8 +1,11 @@
 package com.group25.webapp.controllers;
 
+import com.group25.webapp.errors.NotFound;
 import com.group25.webapp.service.CountriesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * The controller for countries.
@@ -46,8 +49,12 @@ public class CountriesController {
                                 @RequestParam(required = false) Integer limit,
                                 @RequestParam(required = false) Integer offset,
                                 @RequestParam(required = false) Integer lower,
-                                @RequestParam(required = false) Integer upper) {
-        return countriesService.JSONCountrySummaryByISO(ISO, dataType, order, limit, offset, lower, upper);
+                                @RequestParam(required = false) Integer upper) throws NotFound {
+        try {
+            return countriesService.JSONCountrySummaryByISO(ISO, dataType, order, limit, offset, lower, upper);
+        } catch (NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given ISO", e);
+        }
     }
 
     /**
@@ -71,8 +78,13 @@ public class CountriesController {
      * @return the data entry of a specific country (identified by ISO) and year
      */
     @GetMapping("/countries/{ISO}/{year}")
-    public String countryISOYearGet(@PathVariable String ISO, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) {
-        return countriesService.JSONCountrySummaryByISOAndYear(ISO, year, dataType);
+    public String countryISOYearGet(@PathVariable String ISO, @PathVariable Integer year,
+                                    @RequestParam(required = false) Integer dataType) throws NotFound{
+        try {
+            return countriesService.JSONCountrySummaryByISOAndYear(ISO, year, dataType);
+        } catch(NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given ISO and year", e);
+        }
     }
 
     /**
@@ -120,8 +132,12 @@ public class CountriesController {
                                  @RequestParam(required = false) Integer limit,
                                  @RequestParam(required = false) Integer offset,
                                  @RequestParam(required = false) Integer lower,
-                                 @RequestParam(required = false) Integer upper) {
-        return countriesService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
+                                 @RequestParam(required = false) Integer upper) throws NotFound{
+        try {
+            return countriesService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
+        } catch(NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
+        }
     }
 
 }

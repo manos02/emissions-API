@@ -1,11 +1,14 @@
 package com.group25.webapp.service;
 
+import com.group25.webapp.errors.NotFound;
 import com.group25.webapp.model.*;
 import com.group25.webapp.model.repository.ContinentRepository;
 import com.group25.webapp.util.JSON;
 import com.group25.webapp.util.ListManipulation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,8 +66,13 @@ public class ContinentsService {
      * @param upper the upper bounds of year
      * @return the summaryData with a list of datatype of the country specified by ISO
      */
-    public String JSONContinentSummaryByName(String name, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) {
+    public String JSONContinentSummaryByName(String name, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) throws NotFound {
         ContinentEntity continent = continentRepository.findFirstByName(name);
+
+        if(continent==null){
+            throw new NotFound();
+        }
+
         List<Data> dataList = specificData(name, dataType);
 
         bounds(dataList, lower, upper);
@@ -82,12 +90,13 @@ public class ContinentsService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType){
+    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType) throws NotFound{
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
-        Data data = null;
-        if(continentEntity!=null) {
-            data = continentEntity.retrieveDataByType(dataType);
+        if (continentEntity == null){
+            throw new NotFound();
         }
+
+        Data data = continentEntity.retrieveDataByType(dataType);
 
         return JSON.toJson(data);
     }
@@ -103,9 +112,13 @@ public class ContinentsService {
      * @param upper the upper bounds of population
      * @return list of data in json
      */
-    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper){
+    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) throws NotFound{
         List<FullData> dataList = fullDataByYear(year);
         List<Data> finalList = new ArrayList<>();
+
+        if(dataList.isEmpty()){
+            throw new NotFound();
+        }
 
         boundsPop(dataList, lower, upper);
 
@@ -256,11 +269,12 @@ public class ContinentsService {
      * @param dataType the dataType
      * @return the list of Data for a ISO
      */
-    public List<Data> specificData(String name, Integer dataType){
+    public List<Data> specificData(String name, Integer dataType) {
         List<Data> dataList = new ArrayList<>();
-        List<ContinentEntity> countries = continentRepository.findByName(name);
+        List<ContinentEntity> continents = continentRepository.findByName(name);
 
-        for(var it : countries){
+
+        for(var it : continents){
             dataList.add(it.retrieveDataByType(dataType));
         }
         return dataList;

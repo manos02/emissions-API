@@ -1,9 +1,12 @@
 package com.group25.webapp.controllers;
 
 
+import com.group25.webapp.errors.NotFound;
 import com.group25.webapp.service.ContinentsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * The controller for continents.
@@ -47,8 +50,12 @@ public class ContinentsController {
                                 @RequestParam(required = false) Integer limit,
                                 @RequestParam(required = false) Integer offset,
                                 @RequestParam(required = false) Integer lower,
-                                @RequestParam(required = false) Integer upper) {
-        return continentsService.JSONContinentSummaryByName(ISO, dataType, order, limit, offset, lower, upper);
+                                @RequestParam(required = false) Integer upper) throws ResponseStatusException {
+        try {
+            return continentsService.JSONContinentSummaryByName(ISO, dataType, order, limit, offset, lower, upper);
+        } catch (NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given name", e);
+        }
     }
 
     /**
@@ -72,8 +79,12 @@ public class ContinentsController {
      * @return the data entry of a specific country (identified by ISO) and year
      */
     @GetMapping("/continents/{ISO}/{year}")
-    public String continentISOYearGet(@PathVariable String ISO, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) {
-        return continentsService.JSONContinentSummaryByNameAndYear(ISO, year, dataType);
+    public String continentISOYearGet(@PathVariable String ISO, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) throws ResponseStatusException{
+        try {
+            return continentsService.JSONContinentSummaryByNameAndYear(ISO, year, dataType);
+        } catch(NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name and year", e);
+        }
     }
 
     /**
@@ -121,8 +132,12 @@ public class ContinentsController {
                                  @RequestParam(required = false) Integer limit,
                                  @RequestParam(required = false) Integer offset,
                                  @RequestParam(required = false) Integer lower,
-                                 @RequestParam(required = false) Integer upper) {
-        return continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
+                                 @RequestParam(required = false) Integer upper) throws ResponseStatusException{
+        try {
+            return continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
+        } catch (NotFound e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
+        }
     }
 
 

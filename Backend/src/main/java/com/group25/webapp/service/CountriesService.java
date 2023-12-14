@@ -1,5 +1,6 @@
 package com.group25.webapp.service;
 
+import com.group25.webapp.errors.NotFound;
 import com.group25.webapp.model.*;
 import com.group25.webapp.model.repository.CountryRepository;
 import com.group25.webapp.util.JSON;
@@ -77,8 +78,14 @@ public class CountriesService {
      * @param upper the upper bounds of year
      * @return the summaryData with a list of datatype of the country specified by ISO
      */
-    public String JSONCountrySummaryByISO(String ISO, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) {
+    public String JSONCountrySummaryByISO(String ISO, Integer dataType, String order, Integer limit, Integer offset,
+                                          Integer lower, Integer upper) throws NotFound {
         CountryEntity country = countryRepository.findFirstByISO(ISO);
+
+        if(country == null){
+            throw new NotFound();
+        }
+
         List<Data> dataList = specificData(ISO, dataType);
 
         bounds(dataList, lower, upper);
@@ -96,12 +103,14 @@ public class CountriesService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType){
+    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType) throws NotFound{
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
-        Data data = null;
-        if(countryEntity!=null) {
-            data = countryEntity.retrieveDataByType(dataType);
+
+        if(countryEntity == null){
+            throw new NotFound();
         }
+
+        Data data = countryEntity.retrieveDataByType(dataType);
 
         return JSON.toJson(data);
     }
@@ -117,8 +126,13 @@ public class CountriesService {
      * @param upper the upper bounds of population
      * @return list of data in json
      */
-    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper){
+    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset,
+                                  Integer lower, Integer upper) throws NotFound{
         List<FullData> dataList = fullDataByYear(year);
+        if(dataList.isEmpty()){
+            throw new NotFound();
+        }
+
         List<Data> finalList = new ArrayList<>();
 
         boundsPop(dataList, lower, upper);
