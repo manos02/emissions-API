@@ -13,20 +13,17 @@ import java.util.List;
  */
 @Repository
 public interface ContinentRepository extends JpaRepository<ContinentEntity, Integer> {
-    ContinentEntity findFirstByISO(String iso_code);
-
-    @Query("SELECT DISTINCT ISO FROM ContinentEntity")
-    List<String> findDistinctISO();
-
-
+    ContinentEntity findFirstByName(String name);
 
     @Query("SELECT DISTINCT name FROM ContinentEntity")
     List<String> findDistinctContinent();
 
+    ContinentEntity findFirstByNameAndYear(String name, Integer year);
+
     @Query("SELECT DISTINCT year FROM ContinentEntity")
     List<Integer> findDistinctYear();
 
-    List<ContinentEntity> findByISO(String iso_code);
+    List<ContinentEntity> findByName(String name);
 
     List<ContinentEntity> findByYear(Integer year);
 

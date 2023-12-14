@@ -15,157 +15,114 @@ public class ContinentsController {
     private ContinentsService continentsService;
 
     /**
-     * The method for the get request of the /continents path.
-     * @param filter the filter
-     * @param order the order
-     * @param limit the limit
-     * @param offset the offset
-     * @return The list of all continents after filtering.
+     * The method for the get request of the /countries path.
+     *
+     * @param filter the filter to filter by
+     * @param order  the order to order by
+     * @param limit  the limit of data returned
+     * @param offset the offset of the data returned
+     * @return The list of all countries after filtering.
      */
     @GetMapping("/continents")
-    public String continentsGet(@RequestParam(required = false) String filter, @RequestParam(required = false) String order,
+    public String continentGet(@RequestParam(required = false) String filter, @RequestParam(required = false) String order,
                                @RequestParam(required = false) Integer limit, @RequestParam(required = false) Integer offset) {
-        return "something";
+        return continentsService.JSONContinentSummaries(filter, order, limit, offset);
     }
 
     /**
-     * The method for the get request of the /continents/{name} path.
-     * @param name the name of the continent
-     * @return the summary of the continent
+     * The method for the get request of the /countries/{ISO} path.
+     * @param ISO the ISO of the country
+     * @param dataType the datatype to display (shows fulldata by default)
+     * @param order the order (descending or ascending, ascending by default)
+     * @param limit how many entries we are outputting
+     * @param offset what the limit is offset by
+     * @param lower the lower limit for years
+     * @param upper the upper limit for years
+     * @return the data list for a country identified by ISO and optionality filtered by datatype, order, limit, offset,
+     * lower and upper.
      */
-    @GetMapping("/continents/{name}")
-    public String continentNameGet(@RequestParam String name) {
-        return "something";
+    @GetMapping("/continents/{ISO}")
+    public String continentISOGet(@PathVariable String ISO, @RequestParam(required = false) Integer dataType,
+                                @RequestParam(required = false) String order,
+                                @RequestParam(required = false) Integer limit,
+                                @RequestParam(required = false) Integer offset,
+                                @RequestParam(required = false) Integer lower,
+                                @RequestParam(required = false) Integer upper) {
+        return continentsService.JSONContinentSummaryByName(ISO, dataType, order, limit, offset, lower, upper);
     }
 
     /**
-     * The method for the get request of the /continents/{name}/general-data path.
-     * @param name the name of the continent
-     * @param lowerLimit the lowerLimit
-     * @param upperLimit the lowerLimit
-     * @return all the general data of the continent specified by name
+     * The method for the post request of the /countries/{ISO} path.
+     * @param ISO the ISO of the country
+     * @param jsonYear the year in json format of the data to be created.
+     * @return success if succesful
      */
-    @GetMapping("/continents/{name}/general-data")
-    public String getContinentGeneralData(@PathVariable String name, @RequestParam(required = false) Integer lowerLimit,
-                          @RequestParam(required = false) Integer upperLimit) {
-        return "string";
+    @PostMapping("/continents/{ISO}")
+    public String continentISOYearPost(@PathVariable String ISO,
+                                     @RequestBody String jsonYear) {
+        continentsService.createData(ISO, jsonYear);
+        return "Success";
     }
 
     /**
-     * The get request for the /continents/{name}/general-data/{year} path.
-     * @param name the name of the continent
-     * @param year the year of the general data
-     * @return the specific general data of the continent specified by name and year
-     */
-    @GetMapping("/continents/{name}/general-data/{year}")
-    public String getYearContinentGeneralData(@PathVariable String name, @PathVariable String year) {
-        return "string";
-    }
-
-    /**
-     * The put request for the /continents/{name}/general-data/{year} path.
-     * @param name the name of the continent
-     * @param year the year of the general data
-     * @param Data the new data
-     * @return the updated data
-     */
-    @PutMapping("/continents/{name}/general-data/{year}")
-    public String putYearContinentGeneralData(@PathVariable String name, @PathVariable String year, @RequestBody String Data) {
-        return "string";
-    }
-
-    /**
-     * The post request for the /continents/{name}/general-data/{year} path.
-     * @param name the name of the continent
-     * @param year the year of the general data
-     * @param Data the new data
-     * @return the newly created data
-     */
-    @PostMapping("/continents/{name}/general-data/{year}")
-    public String postYearContinentGeneralData(@PathVariable String name, @PathVariable String year, @RequestBody String Data) {
-        return "string";
-    }
-
-    /**
-     * The delete request for the /continents/{name}/general-data/{year} path.
-     * @param name the name of the continent
-     * @param year the year of the general data
-     * @return "deleted data"
-     */
-    @DeleteMapping("/continents/{name}/general-data/{year}")
-    public String DeleteYearContinentGeneralData(@PathVariable String name, @PathVariable String year) {
-        return "string";
-    }
-
-    /**
-     * The get request for /continents/{name}/emission-data path.
-     * @param name the name of the continent
-     * @return all the emission data of the continent specified by name
-     */
-    @GetMapping("/continents/{name}/emission-data")
-    public String getContinentEmissionData(@PathVariable String name) {
-        return "string";
-    }
-
-    /**
-     * The get request for /continents/{name}/emission-data/{year}
-     * @param name the name of the continent
+     * The method for the get request of the /countries/{ISO}/{year} path.
+     * @param ISO the ISO of the country
      * @param year the year of the data
-     * @return the emission data of the continent specified by name and year
+     * @param dataType the data type returned (fulldata by default)
+     * @return the data entry of a specific country (identified by ISO) and year
      */
-    @GetMapping("/continents/{name}/emission-data/{year}")
-    public String getYearContinentEmissionData(@PathVariable String name, @PathVariable String year) {
-        return "string";
+    @GetMapping("/continents/{ISO}/{year}")
+    public String continentISOYearGet(@PathVariable String ISO, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) {
+        return continentsService.JSONContinentSummaryByNameAndYear(ISO, year, dataType);
     }
 
-    @PutMapping("/continents/{name}/emissions-data/{year}")
-    public String putYearContinentEmissionData(@PathVariable String name, @PathVariable String year, @RequestBody String data) {
-        return "string";
+    /**
+     * The method for the put request for the /countries/{ISO}/{year} path.
+     * @param ISO the ISO of the country
+     * @param year the year of the data
+     * @param dataType the dataType to update (fulldata by default)
+     * @param updatedCountry the updated information in json format
+     * @return the updated information
+     */
+    @PutMapping("/continents/{ISO}/{year}")
+    public String continentISOYearPut(@PathVariable String ISO, @PathVariable Integer year,
+                                    @RequestParam(required = false) Integer dataType,
+                                    @RequestBody String updatedCountry) {
+        return continentsService.updateData(ISO, year, dataType, updatedCountry);
     }
 
-    @PostMapping("/continents/{name}/emissions-data/{year}")
-    public String postYearContinentEmissionData(@PathVariable String name, @PathVariable String year, @RequestBody String data) {
-        return "string";
+    /**
+     * The method for the delete request of the /countries/{ISO}/{year} path.
+     * @param ISO the ISO of the country
+     * @param year the year of the data
+     * @return successfully deleted if success
+     */
+    @DeleteMapping("/continents/{ISO}/{year}")
+    public String continentISOYearDelete(@PathVariable String ISO, @PathVariable Integer year) {
+        continentsService.deleteData(ISO, year);
+        return "successfully deleted";
     }
 
-    @DeleteMapping("/continents/{name}/emissions-data/{year}")
-    public String deleteYearContinentEmissionData(@PathVariable String name, @PathVariable String year) {
-        return "string";
-    }
-
-    @GetMapping("/continents/{name}/energy-data")
-    public String getContinentEnergyData(@PathVariable String name) {
-        return "string";
-    }
-
-    @GetMapping("/continents/{name}/energy-data/{year}")
-    public String getYearContinentEnergyData(@PathVariable String name, @PathVariable String year) {
-        return "string";
-    }
-
-    @PutMapping("/continents/{name}/energy-data/{year}")
-    public String putYearContinentEnergyData(@PathVariable String name, @PathVariable String year, @RequestBody String data) {
-        return "string";
-    }
-
-    @PostMapping("/continents/{name}/energy-data/{year}")
-    public String postYearContinentEnergyData(@PathVariable String name, @PathVariable String year, @RequestBody String data) {
-        return "string";
-    }
-
-    @DeleteMapping("/continents/{name}/energy-data/{year}")
-    public String deleteYearContinentEnergyData(@PathVariable String name, @PathVariable String year) {
-        return "string";
-    }
-
-    @GetMapping("/continents/{name}/full-data")
-    public String getContinentFullData(@PathVariable String name) {
-        return "string";
-    }
-
-    @GetMapping("/continents/{name}/full-data/{year}")
-    public String getYearContinentFullData(@PathVariable String name, @PathVariable String year) {
-        return "string";
+    /**
+     * The method for the get request of the /countries/year{year} path.
+     * @param year the year
+     * @param dataType the datatype (fulldata by default)
+     * @param order the order (descending or ascending, ascending by default)
+     * @param limit the limit for the number of entries outputted
+     * @param offset the offset of the limit
+     * @param lower the lower bound of population
+     * @param upper the upper bound of population
+     * @return the list of the data for all countries in a specific year, optionally filtered by datatype, order, limit,
+     * offset, lower bounds and upper bounds.
+     */
+    @GetMapping("/continents/year{year}")
+    public String continentYearGet(@PathVariable Integer year, @RequestParam(required = false) Integer dataType,
+                                 @RequestParam(required = false) String order,
+                                 @RequestParam(required = false) Integer limit,
+                                 @RequestParam(required = false) Integer offset,
+                                 @RequestParam(required = false) Integer lower,
+                                 @RequestParam(required = false) Integer upper) {
+        return continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
     }
 
 
