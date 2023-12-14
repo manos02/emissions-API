@@ -72,6 +72,7 @@ public class CountriesController {
      */
     @GetMapping("/countries/{ISO}/{year}")
     public String countryISOYearGet(@PathVariable String ISO, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) {
+        System.out.println(dataType);
         return countriesService.JSONCountrySummaryByISOAndYear(ISO, year, dataType);
     }
 

@@ -11,19 +11,25 @@ import java.io.IOException;
  * The Class for EmissionData
  */
 public class EmissionData implements Data {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long co2;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long ch4;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long n20;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long ghg;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer year;
 
     /**
      * The constructor for EmissionData
+     *
      * @param co2 the co2
      * @param ch4 the ch4
      * @param n20 the n20
@@ -37,7 +43,7 @@ public class EmissionData implements Data {
         this.year = year;
     }
 
-    public EmissionData(){
+    public EmissionData() {
 
     }
 

@@ -12,22 +12,28 @@ import java.io.IOException;
  * The class for FullData.
  */
 public class FullData implements Data {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer year;
-    @Getter @Setter
+    @Getter
+    @Setter
     private EmissionData emissionData;
-    @Getter @Setter
+    @Getter
+    @Setter
     private EnergyData energyData;
-    @Getter @Setter
+    @Getter
+    @Setter
     private GeneralData generalData;
-    @Getter @Setter
+    @Getter
+    @Setter
     private TemperatureData temperatureData;
 
     /**
      * The constructor for FullData.
-     * @param emissionData the EmissionData
-     * @param energyData the EnergyData
-     * @param generalData the GeneralData
+     *
+     * @param emissionData    the EmissionData
+     * @param energyData      the EnergyData
+     * @param generalData     the GeneralData
      * @param temperatureData the TemperatureData
      */
     public FullData(Integer year, EmissionData emissionData, EnergyData energyData, GeneralData generalData, TemperatureData temperatureData) {
@@ -38,22 +44,22 @@ public class FullData implements Data {
         this.year = year;
     }
 
-    public FullData(){
+    public FullData() {
 
     }
 
-    public Long population(){
-        if(getGeneralData().getPopulation()==null){
-            return (long)-1;
+    public Long population() {
+        if (getGeneralData().getPopulation() == null) {
+            return (long) -1;
         }
         return getGeneralData().getPopulation();
     }
 
-    public Data retrieveDataByType(Integer dataType){
-        if(dataType == null){
+    public Data retrieveDataByType(Integer dataType) {
+        if (dataType == null) {
             return this;
         }
-        return switch ((int)dataType) {
+        return switch ((int) dataType) {
             case 0 -> getGeneralData();
             case 1 -> getEmissionData();
             case 2 -> getEnergyData();

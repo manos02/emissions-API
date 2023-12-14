@@ -11,21 +11,25 @@ import java.io.IOException;
  * The class for general data.
  */
 public class GeneralData implements Data {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long population;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long gdp;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer year;
 
-    public GeneralData(){
+    public GeneralData() {
 
     }
 
     /**
      * The constructor for GeneralData.
+     *
      * @param population the population
-     * @param gdp the gdp
+     * @param gdp        the gdp
      */
     public GeneralData(Integer year, Long population, Long gdp) {
         this.year = year;
