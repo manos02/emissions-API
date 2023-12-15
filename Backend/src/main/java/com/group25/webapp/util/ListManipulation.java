@@ -12,10 +12,11 @@ public class ListManipulation {
 
     /**
      * The method concats two arrays together.
+     *
      * @param array1 first array
      * @param array2 second array
+     * @param <T>    the generics type
      * @return the concated array
-     * @param <T> the generics type
      */
     public static <T> List<T> concatWithCollection(List<T> array1, List<T> array2) {
         List<T> resultList = new ArrayList<>(array1.size() + array2.size());
@@ -28,44 +29,48 @@ public class ListManipulation {
 
     /**
      * Applies an offset filter to a list, returning all the elements except the first n.
-     * @param list The list that will be offset.
+     *
+     * @param list   The list that will be offset.
      * @param offset The offset value.
-     * @param <T> The generic data type.
+     * @param <T>    The generic data type.
      */
-    public static <T> List<T> applyOffset(List<T> list, int offset){
+    public static <T> List<T> applyOffset(List<T> list, int offset) {
         return list.subList(offset, list.size());
     }
 
     /**
      * Applies a limit filter to a list, returning only the first n elements.
-     * @param list The list that will be limited.
+     *
+     * @param list  The list that will be limited.
      * @param limit The limit value.
-     * @param <T> The generic data type.
+     * @param <T>   The generic data type.
      */
-    public static <T> List<T> applyLimit(List<T> list, int limit){
+    public static <T> List<T> applyLimit(List<T> list, int limit) {
         return list.subList(0, limit);
     }
 
     /**
      * Applies a inverse limit filter to a list, returning only the last n elements.
-     * @param list The list that will be limited.
+     *
+     * @param list  The list that will be limited.
      * @param limit The limit value.
+     * @param <T>   The generic data type.
      * @return The list after limiting.
-     * @param <T> The generic data type.
      */
-    public static <T> List<T> applyInverseLimit(List<T> list, int limit){
+    public static <T> List<T> applyInverseLimit(List<T> list, int limit) {
         return list.subList(list.size() - limit, list.size());
     }
 
     /**
      * Applies a range filter to a list, returning only the elements withing the given range.
-     * @param list The list that will be filtered.
+     *
+     * @param list       The list that will be filtered.
      * @param lowerBound The lower bound of the range.
      * @param upperBound The upper bound of the range.
+     * @param <T>        The generic data type.
      * @return The list after it is filtered.
-     * @param <T> The generic data type.
      */
-    public static <T> List<T> applyRange(List<T> list, int lowerBound, int upperBound){
+    public static <T> List<T> applyRange(List<T> list, int lowerBound, int upperBound) {
         return list.subList(lowerBound, upperBound);
     }
 }

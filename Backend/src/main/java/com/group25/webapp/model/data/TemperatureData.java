@@ -1,4 +1,4 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,22 +11,29 @@ import java.io.IOException;
  * The class for temperature data.
  */
 public class TemperatureData implements Data {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer year;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long shares;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long change_ch4;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long change_n20;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long change_co2;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long change_ghg;
 
     /**
      * The constructor for TemperatureData.
-     * @param shares the shares
+     *
+     * @param shares     the shares
      * @param change_ch4 the change from ch4
      * @param change_n20 the change from n20
      * @param change_co2 the change from co2
@@ -41,7 +48,7 @@ public class TemperatureData implements Data {
         this.year = year;
     }
 
-    public TemperatureData(){
+    public TemperatureData() {
 
     }
 
@@ -64,7 +71,7 @@ public class TemperatureData implements Data {
             return mapper.readValue(json, this.getClass());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

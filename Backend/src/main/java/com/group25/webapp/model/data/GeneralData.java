@@ -1,4 +1,4 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,43 +8,33 @@ import lombok.Setter;
 import java.io.IOException;
 
 /**
- * The Class for EmissionData
+ * The class for general data.
  */
-public class EmissionData implements Data {
+public class GeneralData implements Data {
     @Getter
     @Setter
-    private Long co2;
+    private Long population;
     @Getter
     @Setter
-    private Long ch4;
-    @Getter
-    @Setter
-    private Long n20;
-    @Getter
-    @Setter
-    private Long ghg;
+    private Long gdp;
     @Getter
     @Setter
     private Integer year;
 
-    /**
-     * The constructor for EmissionData
-     *
-     * @param co2 the co2
-     * @param ch4 the ch4
-     * @param n20 the n20
-     * @param ghg the ghg
-     */
-    public EmissionData(Integer year, Long co2, Long ch4, Long n20, Long ghg) {
-        this.co2 = co2;
-        this.ch4 = ch4;
-        this.n20 = n20;
-        this.ghg = ghg;
-        this.year = year;
+    public GeneralData() {
+
     }
 
-    public EmissionData() {
-
+    /**
+     * The constructor for GeneralData.
+     *
+     * @param population the population
+     * @param gdp        the gdp
+     */
+    public GeneralData(Integer year, Long population, Long gdp) {
+        this.year = year;
+        this.population = population;
+        this.gdp = gdp;
     }
 
     @Override

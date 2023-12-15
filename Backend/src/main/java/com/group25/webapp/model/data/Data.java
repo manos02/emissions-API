@@ -1,4 +1,4 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.data;
 
 /**
  * The interface for data.

@@ -12,9 +12,10 @@ public class JSON {
 
     /**
      * The method converts an object to Json.
+     *
      * @param object the object to be converted
+     * @param <T>    the generics type
      * @return the json string
-     * @param <T> the generics type
      */
     public static <T> String toJson(T object) {
 
@@ -29,10 +30,11 @@ public class JSON {
 
     /**
      * The method converts a json string to an object.
+     *
      * @param json the json string
      * @param type the class of the object
+     * @param <T>  the generics type
      * @return the object
-     * @param <T> the generics type
      */
     public static <T> T fromJson(String json, Class<T> type) {
         ObjectMapper mapper = new ObjectMapper();

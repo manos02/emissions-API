@@ -1,7 +1,6 @@
 package com.group25.webapp.model.repository;
 
-import com.group25.webapp.model.CountryEntity;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.group25.webapp.model.entities.CountryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

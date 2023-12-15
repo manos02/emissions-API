@@ -1,8 +1,7 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 

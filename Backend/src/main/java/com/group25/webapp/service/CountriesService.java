@@ -1,12 +1,13 @@
 package com.group25.webapp.service;
 
-import com.group25.webapp.model.*;
+import com.group25.webapp.errors.NotFound;
+import com.group25.webapp.model.data.*;
+import com.group25.webapp.model.entities.CountryEntity;
 import com.group25.webapp.model.repository.CountryRepository;
 import com.group25.webapp.util.JSON;
 import com.group25.webapp.util.ListManipulation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,14 +56,14 @@ public class CountriesService {
 
         if (filter != null) {
             if (filter.equals("ISO")) {
-                Collections.sort(fullData, Comparator.comparing(SummaryData::getISO));
+                fullData.sort(Comparator.comparing(SummaryData::getISO));
             }
             if (filter.equals("name")) {
-                Collections.sort(fullData, Comparator.comparing(SummaryData::getName));
+                fullData.sort(Comparator.comparing(SummaryData::getName));
             }
         }
 
-        basicFiltering(fullData, order, limit, offset);
+        fullData = basicFiltering(fullData, order, limit, offset);
 
         return JSON.toJson(fullData);
     }
@@ -79,13 +80,19 @@ public class CountriesService {
      * @param upper    the upper bounds of year
      * @return the summaryData with a list of datatype of the country specified by ISO
      */
-    public String JSONCountrySummaryByISO(String ISO, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) {
+    public String JSONCountrySummaryByISO(String ISO, Integer dataType, String order, Integer limit, Integer offset,
+                                          Integer lower, Integer upper) throws NotFound {
         CountryEntity country = countryRepository.findFirstByISO(ISO);
+
+        if (country == null) {
+            throw new NotFound();
+        }
+
         List<Data> dataList = specificData(ISO, dataType);
 
         bounds(dataList, lower, upper);
 
-        basicFiltering(dataList, order, limit, offset);
+        dataList = basicFiltering(dataList, order, limit, offset);
         SummaryData summaryData = new SummaryData(ISO, country.getName(), dataList);
 
         return JSON.toJson(summaryData);
@@ -99,12 +106,14 @@ public class CountriesService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType) {
+    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType) throws NotFound {
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
-        Data data = null;
-        if (countryEntity != null) {
-            data = countryEntity.retrieveDataByType(dataType);
+
+        if (countryEntity == null) {
+            throw new NotFound();
         }
+
+        Data data = countryEntity.retrieveDataByType(dataType);
 
         return JSON.toJson(data);
     }
@@ -121,8 +130,13 @@ public class CountriesService {
      * @param upper    the upper bounds of population
      * @return list of data in json
      */
-    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) {
+    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset,
+                                  Integer lower, Integer upper) throws NotFound {
         List<FullData> dataList = fullDataByYear(year);
+        if (dataList.isEmpty()) {
+            throw new NotFound();
+        }
+
         List<Data> finalList = new ArrayList<>();
 
         boundsPop(dataList, lower, upper);
@@ -145,6 +159,7 @@ public class CountriesService {
     public void deleteData(String ISO, Integer year) {
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
         countryRepository.delete(countryEntity);
+
     }
 
     /**
@@ -160,6 +175,7 @@ public class CountriesService {
         countryEntity.setYear(JSON.fromJson(jsonYear, int.class));
 
         countryRepository.save(countryEntity);
+
     }
 
     /**
@@ -212,7 +228,7 @@ public class CountriesService {
      * @return the list
      */
     public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
-        Collections.sort(dataList, Comparator.comparing(Data::getYear));
+        dataList.sort(Comparator.comparing(Data::getYear));
 
         if (lower != null) {
             dataList.removeIf((Data data) -> data.getYear() < lower);
@@ -235,7 +251,7 @@ public class CountriesService {
      * @return the list
      */
     public List<FullData> boundsPop(List<FullData> dataList, Integer lower, Integer upper) {
-        Collections.sort(dataList, Comparator.comparing(FullData::population));
+        dataList.sort(Comparator.comparing(FullData::population));
 
         if (lower != null) {
             dataList.removeIf((FullData data) -> data.population() < lower);

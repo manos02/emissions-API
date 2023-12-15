@@ -1,4 +1,4 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.entities;
 
 import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;

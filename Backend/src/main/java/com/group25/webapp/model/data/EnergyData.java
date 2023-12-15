@@ -1,4 +1,4 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,15 +11,19 @@ import java.io.IOException;
  * The class for EnergyData.
  */
 public class EnergyData implements Data {
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long energy_per_cap;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Long energy_per_ghg;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer year;
 
     /**
      * The constructor for EnergyData.
+     *
      * @param energy_per_cap the energy per cap
      * @param energy_per_ghg the energy per ghg
      */
@@ -29,7 +33,7 @@ public class EnergyData implements Data {
         this.year = year;
     }
 
-    public EnergyData(){
+    public EnergyData() {
 
     }
 
@@ -52,7 +56,7 @@ public class EnergyData implements Data {
             return mapper.readValue(json, this.getClass());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

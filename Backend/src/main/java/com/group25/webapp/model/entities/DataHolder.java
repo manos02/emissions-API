@@ -1,5 +1,6 @@
-package com.group25.webapp.model;
+package com.group25.webapp.model.entities;
 
+import com.group25.webapp.model.data.*;
 import com.group25.webapp.model.dataView.*;
 import jakarta.persistence.*;
 import lombok.Getter;
