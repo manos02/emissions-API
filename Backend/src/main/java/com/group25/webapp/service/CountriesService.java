@@ -90,7 +90,7 @@ public class CountriesService {
 
         List<Data> dataList = specificData(ISO, dataType);
 
-        bounds(dataList, lower, upper);
+        dataList = bounds(dataList, lower, upper);
 
         dataList = basicFiltering(dataList, order, limit, offset);
         SummaryData summaryData = new SummaryData(ISO, country.getName(), dataList);
