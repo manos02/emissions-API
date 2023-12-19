@@ -11,11 +11,9 @@ const Layout = () => {
     <Navbar expand="lg" className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
       <Container className= 'Layout-nav'>
         <header className = 'Layout-header'> Temperature and Emissions Data! </header>
-      <Nav>
       <a className = 'Layout-nav-item' href="/">Home</a>
       <a className = 'Layout-nav-item' href="/countries">Countries</a>
       <a className = 'Layout-nav-item' href="/continents">Continents</a>
-      </Nav>
       <a className = 'Layout-login'>Log in</a>
       </Container>
       <Outlet />
