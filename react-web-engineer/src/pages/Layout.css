@@ -1,0 +1,30 @@
+.Layout-header {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #282c34;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.Layout-nav {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: seagreen;
+  color: #fff;
+  padding: 1rem; 
+}
+
+.Layout-login {
+  margin-left: auto;
+  background-color: seagreen;
+  color: #fff;
+  padding: 1rem; 
+}
+
+.Layout-nav-item {
+  padding: 1rem; 
+}
