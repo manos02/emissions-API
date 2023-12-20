@@ -7,6 +7,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  font-family: Verdana;
 }
 
 .Layout-nav {
@@ -16,9 +17,21 @@
   background-color: seagreen;
   color: #fff;
   padding: 1rem; 
+  font-family: Verdana;
 }
 
 .Layout-login {
+  transition-duration: 0.3s;
+}
+
+.Layout-login:hover {
+  background-color: #04AA6D; /* Green */
+  color: black;
+}
+
+.Layout-login {
+  font-family: Verdana;
+  border-radius: 5px;
   margin-left: auto;
   background-color: seagreen;
   color: #fff;
@@ -26,5 +39,16 @@
 }
 
 .Layout-nav-item {
+  transition-duration: 0.3s;
+}
+
+.Layout-nav-item:hover {
+  color: grey;
+}
+
+.Layout-nav-item {
+  font-family: Verdana;
+  justify-content: center;
+  color: white;
   padding: 1rem; 
 }

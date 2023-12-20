@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
  * The controller for continents.
  */
 @RestController
+@CrossOrigin
 public class ContinentsController {
 
     @Autowired

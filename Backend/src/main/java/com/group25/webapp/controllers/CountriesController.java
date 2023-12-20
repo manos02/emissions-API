@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
  * The controller for countries.
  */
 @RestController
+@CrossOrigin
 public class CountriesController {
 
     @Autowired
