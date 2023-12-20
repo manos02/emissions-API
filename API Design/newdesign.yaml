@@ -493,8 +493,6 @@ paths:
               example: |-
                 year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
                 0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
-                
-
 
         '400':
           $ref: '#/components/responses/BadRequest'

@@ -33,32 +33,25 @@ public class ContinentsService {
     }
 
     /**
-     * Generates a list of countrySummaries, filtered and ordered by specific parameters.
+     * Generates a list of continentSummaries, filtered and ordered by specific parameters.
      *
-     * @param filter What the data should be sorted by.
      * @param order  Whether the data is ascending or descending.
      * @param limit  How many elements should be returned.
      * @param offset The offset the data should have.
-     * @return The generated list of countries summaries, in JSON format.
+     * @return The generated list of continent summaries, in JSON format.
      */
-    public String JSONContinentSummaries(String filter, String order, Integer limit, Integer offset) {
+    public String JSONContinentSummaries(String order, Integer limit, Integer offset) {
         List<String> nameList = continentSummaries();
 
-        if (filter != null) {
-            if (filter.equals("name")) {
-                Collections.sort(nameList);
-            }
-        }
-
-        basicFiltering(nameList, order, limit, offset);
+        nameList = basicFiltering(nameList, order, limit, offset);
 
         return JSON.toJson(nameList);
     }
 
     /**
-     * Generates the country summary for a country, specified by ISO.
+     * Generates the continent summary for a country, specified by name.
      *
-     * @param name     the name of the specific country
+     * @param name     the name of the specific continent
      * @param dataType the datatype
      * @param order    the order
      * @param limit    the limit
@@ -75,10 +68,8 @@ public class ContinentsService {
         }
 
         List<Data> dataList = specificData(name, dataType);
-
-        bounds(dataList, lower, upper);
-
-        basicFiltering(dataList, order, limit, offset);
+        dataList = bounds(dataList, lower, upper);
+        dataList = basicFiltering(dataList, order, limit, offset);
         SummaryData summaryData = new SummaryData(name, continent.getName(), dataList);
 
         return JSON.toJson(summaryData);
@@ -123,9 +114,8 @@ public class ContinentsService {
             throw new NotFound();
         }
 
-        boundsPop(dataList, lower, upper);
-
-        basicFiltering(dataList, order, limit, offset);
+        dataList = boundsPop(dataList, lower, upper);
+        dataList = basicFiltering(dataList, order, limit, offset);
 
         for (var it : dataList) {
             finalList.add(it.retrieveDataByType(dataType));
@@ -156,9 +146,7 @@ public class ContinentsService {
         ContinentEntity continentEntity = new ContinentEntity();
         continentEntity.setName(continentRepository.findFirstByName(name).getName());
         continentEntity.setYear(JSON.fromJson(jsonYear, int.class));
-
         continentRepository.save(continentEntity);
-
     }
 
     /**
@@ -167,34 +155,34 @@ public class ContinentsService {
      * @param name           the name of the data
      * @param year           the year of the data
      * @param dataType       the datatype modified
-     * @param updatedCountry the updated data in json format
+     * @param updatedContinent the updated data in json format
      * @return the updated data.
      */
-    public String updateData(String name, Integer year, Integer dataType, String updatedCountry) {
+    public String updateData(String name, Integer year, Integer dataType, String updatedContinent) {
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
         Data data = null;
 
         switch (dataType) {
-            case 0:
-                data = JSON.fromJson(updatedCountry, GeneralData.class);
+            case 0 -> {
+                data = JSON.fromJson(updatedContinent, GeneralData.class);
                 continentEntity.setGeneralData((GeneralData) data);
-                break;
-            case 1:
-                data = JSON.fromJson(updatedCountry, EmissionData.class);
+            }
+            case 1 -> {
+                data = JSON.fromJson(updatedContinent, EmissionData.class);
                 continentEntity.setEmissionData((EmissionData) data);
-                break;
-            case 2:
-                data = JSON.fromJson(updatedCountry, EnergyData.class);
+            }
+            case 2 -> {
+                data = JSON.fromJson(updatedContinent, EnergyData.class);
                 continentEntity.setEnergyData((EnergyData) data);
-                break;
-            case 3:
-                data = JSON.fromJson(updatedCountry, TemperatureData.class);
+            }
+            case 3 -> {
+                data = JSON.fromJson(updatedContinent, TemperatureData.class);
                 continentEntity.setTemperatureData((TemperatureData) data);
-                break;
-            case 4:
-                data = JSON.fromJson(updatedCountry, FullData.class);
+            }
+            case 4 -> {
+                data = JSON.fromJson(updatedContinent, FullData.class);
                 continentEntity.setFullData((FullData) data);
-                break;
+            }
         }
 
         continentRepository.save(continentEntity);
@@ -211,7 +199,7 @@ public class ContinentsService {
      * @return the list
      */
     public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
-        Collections.sort(dataList, Comparator.comparing(Data::getYear));
+        dataList.sort(Comparator.comparing(Data::getYear));
 
         if (lower != null) {
             dataList.removeIf((Data data) -> data.getYear() < lower);
@@ -234,7 +222,7 @@ public class ContinentsService {
      * @return the list
      */
     public List<FullData> boundsPop(List<FullData> dataList, Integer lower, Integer upper) {
-        Collections.sort(dataList, Comparator.comparing(FullData::population));
+        dataList.sort(Comparator.comparing(FullData::population));
 
         if (lower != null) {
             dataList.removeIf((FullData data) -> data.population() < lower);
