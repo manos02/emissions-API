@@ -182,7 +182,7 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
         if (dataType == null) {
             return getFullData();
         }
-        return switch ((int) dataType) {
+        return switch (dataType) {
             case 0 -> getGeneralData();
             case 1 -> getEmissionData();
             case 2 -> getEnergyData();
@@ -191,19 +191,6 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
             default -> null;
         };
     }
-//
-//    /**
-//     * The getter for the summaryData for the country.
-//     * @return summaryData
-//     */
-//    public SummaryData getSummaryData(){
-//        return new SummaryData(ISO, name);
-//    }
-//
-//    @Override
-//    public String getSummaryDataJSON(){
-//        return getSummaryData().toJson();
-//    }
 
     /**
      * The getter for the full data for the country.

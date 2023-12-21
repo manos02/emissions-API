@@ -91,7 +91,6 @@ public class CountriesService {
         List<Data> dataList = specificData(ISO, dataType);
 
         dataList = bounds(dataList, lower, upper);
-
         dataList = basicFiltering(dataList, order, limit, offset);
         SummaryData summaryData = new SummaryData(ISO, country.getName(), dataList);
 
@@ -131,21 +130,23 @@ public class CountriesService {
      * @return list of data in json
      */
     public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset,
-                                  Integer lower, Integer upper) throws NotFound {
-        List<FullData> dataList = fullDataByYear(year);
-        if (dataList.isEmpty()) {
+                                  Integer lower, Integer upper, String filter) throws NotFound {
+
+        List<CountryEntity> countriesFullData = countryRepository.findByYear(year);
+
+        if (countriesFullData.isEmpty()) {
             throw new NotFound();
         }
+        List<SummaryData> finalList = new ArrayList<>();
 
-        List<Data> finalList = new ArrayList<>();
-
-        boundsPop(dataList, lower, upper);
-
-        basicFiltering(dataList, order, limit, offset);
-
-        for (var it : dataList) {
-            finalList.add(it.retrieveDataByType(dataType));
+        for (var c : countriesFullData) {
+            List<Data> tempList = new ArrayList<>();
+            tempList.add(c.retrieveDataByType(dataType));
+            finalList.add(new SummaryData(c.getISO(), c.getName(), tempList));
         }
+
+        finalList = boundsPop(finalList, lower, upper, filter);
+        finalList = basicFiltering(finalList, order, limit, offset);
 
         return JSON.toJson(finalList);
     }
@@ -250,17 +251,20 @@ public class CountriesService {
      * @param upper    the upper limit
      * @return the list
      */
-    public List<FullData> boundsPop(List<FullData> dataList, Integer lower, Integer upper) {
-        dataList.sort(Comparator.comparing(FullData::population));
+    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
 
-        if (lower != null) {
-            dataList.removeIf((FullData data) -> data.population() < lower);
+        if (filter != null && filter.equals("pop")) {
+//            dataList.sort(Comparator.comparing();
         }
-        Collections.reverse(dataList);
-        if (upper != null) {
-            dataList.removeIf((FullData data) -> data.population() > upper);
-        }
-        Collections.reverse(dataList);
+
+//        if (lower != null) {
+//            dataList.removeIf((FullData data) -> data.population() < lower);
+//        }
+//        Collections.reverse(dataList);
+//        if (upper != null) {
+//            dataList.removeIf((FullData data) -> data.population() > upper);
+//        }
+//        Collections.reverse(dataList);
 
         return dataList;
 
@@ -302,22 +306,6 @@ public class CountriesService {
 
         for (var it : countries) {
             dataList.add(it.retrieveDataByType(dataType));
-        }
-        return dataList;
-    }
-
-    /**
-     * The method gets all the full data of a year.
-     *
-     * @param year the year of the data
-     * @return the list of fulldata
-     */
-    public List<FullData> fullDataByYear(Integer year) {
-        List<FullData> dataList = new ArrayList<>();
-        List<CountryEntity> countries = countryRepository.findByYear(year);
-
-        for (var it : countries) {
-            dataList.add(it.getFullData());
         }
         return dataList;
     }

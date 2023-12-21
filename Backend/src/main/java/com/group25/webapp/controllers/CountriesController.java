@@ -139,9 +139,10 @@ public class CountriesController {
                                  @RequestParam(required = false) Integer limit,
                                  @RequestParam(required = false) Integer offset,
                                  @RequestParam(required = false) Integer lower,
-                                 @RequestParam(required = false) Integer upper) throws NotFound {
+                                 @RequestParam(required = false) Integer upper,
+                                @RequestParam(required = false) String filter) {
         try {
-            return countriesService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper);
+            return countriesService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper, filter);
         } catch (NotFound e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
         }

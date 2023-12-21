@@ -58,7 +58,7 @@ public class FullData implements Data {
         if (dataType == null) {
             return this;
         }
-        return switch ((int) dataType) {
+        return switch (dataType) {
             case 0 -> getGeneralData();
             case 1 -> getEmissionData();
             case 2 -> getEnergyData();
