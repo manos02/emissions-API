@@ -31,5 +31,13 @@ public class SummaryData {
         this.data = data;
     }
 
+    public FullData getFullData(){
+        return (FullData)data.get(0);
+    }
+
+    public Long getFullDataPopulation(){
+        return ((FullData)data.get(0)).population();
+    }
+
 
 }

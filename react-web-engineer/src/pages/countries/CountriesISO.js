@@ -45,12 +45,12 @@ class CountriesISO extends React.Component{
               temp => (
               <p key = {temp.year}>
                 <a>{temp.year}</a>
-                <a>{temp.emission.ch4}</a>
+                {this.setState({emission : temp.emission})}
+                <a>{this.state.emission.co2}</a>
               </p>
               )
             )
           }
-
 
     </div>
     )
