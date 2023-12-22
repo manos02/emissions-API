@@ -152,7 +152,7 @@ public class CountriesService {
         List<SummaryData> finalfinalList = new ArrayList<>();
         for (var it : finalList) {
             List<Data> tempList = new ArrayList<>();
-            tempList.add(it.getFullData().retrieveDataByType(dataType));
+            tempList.add(it.retriveFullData().retrieveDataByType(dataType));
             finalfinalList.add(new SummaryData(it.getISO(), it.getName(), tempList));
         }
 
@@ -262,15 +262,15 @@ public class CountriesService {
     public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
 
         if (filter != null && filter.equals("pop")) {
-            dataList.sort(Comparator.comparing(SummaryData::getFullDataPopulation));
+            dataList.sort(Comparator.comparing(SummaryData::retriveFullDataPopulation));
         }
 
         if (lower != null) {
-            dataList.removeIf((SummaryData data) -> data.getFullData().population() < lower);
+            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
-            dataList.removeIf((SummaryData data) -> data.getFullData().population() > upper);
+            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() > upper);
         }
         Collections.reverse(dataList);
 

@@ -31,11 +31,11 @@ public class SummaryData {
         this.data = data;
     }
 
-    public FullData getFullData(){
+    public FullData retriveFullData(){
         return (FullData)data.get(0);
     }
 
-    public Long getFullDataPopulation(){
+    public Long retriveFullDataPopulation(){
         return ((FullData)data.get(0)).population();
     }
 

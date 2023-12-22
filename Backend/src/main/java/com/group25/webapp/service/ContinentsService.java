@@ -3,6 +3,7 @@ package com.group25.webapp.service;
 import com.group25.webapp.errors.NotFound;
 import com.group25.webapp.model.data.*;
 import com.group25.webapp.model.entities.ContinentEntity;
+import com.group25.webapp.model.entities.CountryEntity;
 import com.group25.webapp.model.repository.ContinentRepository;
 import com.group25.webapp.util.JSON;
 import com.group25.webapp.util.ListManipulation;
@@ -106,22 +107,33 @@ public class ContinentsService {
      * @param upper    the upper bounds of population
      * @return list of data in json
      */
-    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) throws NotFound {
-        List<FullData> dataList = fullDataByYear(year);
-        List<Data> finalList = new ArrayList<>();
+    public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset,
+                                  Integer lower, Integer upper, String filter) throws NotFound {
+        List<ContinentEntity> continentFullData = continentRepository.findByYear(year);
 
-        if (dataList.isEmpty()) {
+        if (continentFullData.isEmpty()) {
             throw new NotFound();
         }
+        List<SummaryData> finalList = new ArrayList<>();
 
-        dataList = boundsPop(dataList, lower, upper);
-        dataList = basicFiltering(dataList, order, limit, offset);
 
-        for (var it : dataList) {
-            finalList.add(it.retrieveDataByType(dataType));
+        for (var c : continentFullData) {
+            List<Data> tempList = new ArrayList<>();
+            tempList.add(c.getFullData());
+            finalList.add(new SummaryData(c.getISO(), c.getName(), tempList));
         }
 
-        return JSON.toJson(finalList);
+        finalList = boundsPop(finalList, lower, upper, filter);
+        finalList = basicFiltering(finalList, order, limit, offset);
+
+        List<SummaryData> finalfinalList = new ArrayList<>();
+        for (var it : finalList) {
+            List<Data> tempList = new ArrayList<>();
+            tempList.add(it.retriveFullData().retrieveDataByType(dataType));
+            finalfinalList.add(new SummaryData(it.getISO(), it.getName(), tempList));
+        }
+
+        return JSON.toJson(finalfinalList);
     }
 
     /**
@@ -221,15 +233,17 @@ public class ContinentsService {
      * @param upper    the upper limit
      * @return the list
      */
-    public List<FullData> boundsPop(List<FullData> dataList, Integer lower, Integer upper) {
-        dataList.sort(Comparator.comparing(FullData::population));
+    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
+        if (filter != null && filter.equals("pop")) {
+            dataList.sort(Comparator.comparing(SummaryData::retriveFullDataPopulation));
+        }
 
         if (lower != null) {
-            dataList.removeIf((FullData data) -> data.population() < lower);
+            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
-            dataList.removeIf((FullData data) -> data.population() > upper);
+            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() > upper);
         }
         Collections.reverse(dataList);
 
