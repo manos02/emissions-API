@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class ContinentsService {
 
-  getContinents(){
+  getContinents() {
     return (axios.get('http://localhost:51417/continents'));
   }
 
