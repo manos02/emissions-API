@@ -1,15 +1,15 @@
 import React from "react";
 import CountriesService from "../../services/CountriesService";
 
-class Countries extends React.Component{
-  constructor(props){
+class Countries extends React.Component {
+  constructor(props) {
     super(props)
     this.state = {
       countries: []
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     CountriesService.getCountries().then((response) => {
       this.setState({countries : response.data})
     })
@@ -44,10 +44,6 @@ class Countries extends React.Component{
     </div>
     )
   }
-
 }
-
-
-
 
 export default Countries;

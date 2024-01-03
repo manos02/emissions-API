@@ -5,7 +5,7 @@ let isLoggedIn = true;
 
 function MyButton({clicks, handleClick}){
   return (<div>
-    <button onClick={handleClick}> 
+    <button onClick={handleClick}>
     click me {clicks}
     </button>
   </div>)
@@ -15,19 +15,25 @@ function MyButton({clicks, handleClick}){
 function App() {
   let content;
   const [clicks, setclicks] = useState(0);
+
+
   function handleClick() {
-    setclicks(clicks+1);
-    alert(clicks);
+    setclicks((prevClicks) => {
+      const updatedClicks = prevClicks + 1;
+      alert(updatedClicks);
+      return updatedClicks;
+    });
   }
 
-  if (isLoggedIn){
-    content = <header>
-      testeigfigefiugy
-      <MyButton clicks={clicks} handleClick={handleClick}/>
-      </header>;
-  } else {
-    content= <header>You already clicked the button</header>
-  }
+
+//  if (isLoggedIn){
+//    content = <header>
+//      testeigfigefiugy
+//      <MyButton clicks={clicks} handleClick={handleClick}/>
+//      </header>;
+//  } else {
+//    content= <header>You already clicked the button</header>
+//  }
   // return (
   //   <div className="App">
   //     <header className="App-header">
@@ -46,39 +52,39 @@ function App() {
   //     </header>
   //   </div>
   // );
-  return (
-    <div className="App">
-      <header className='App-tester'><h1>Hello World!</h1>
-      <form>
-        <label>
-          Input: 
-        <input
-        type="text"
-        name="email"
-        placeholder="Email"
-        />
-        </label>
-        <label> Testing
-        <input
-        type="text"
-        name="email"
-        placeholder="Test"
-        />
-        </label>
-      </form>
-      <p>Trying stuff</p>
-      {content}
-      <p>Trying stuff</p>
-      <p>Trying stuff</p>
-      <p>Trying stuff</p>
-      <p>Trying stuff</p>
-      <p>Trying stuff</p>
-      <p>Trying stuff</p>
-      
-      </header>
-      
-    </div>
-  );
+//  return (
+//    <div className="App">
+//      <header className='App-tester'><h1>Hello World!</h1>
+//      <form>
+//        <label>
+//          Input:
+//        <input
+//        type="text"
+//        name="email"
+//        placeholder="Email"
+//        />
+//        </label>
+//        <label> Testing
+//        <input
+//        type="text"
+//        name="email"
+//        placeholder="Test"
+//        />
+//        </label>
+//      </form>
+//      <p>Trying stuff</p>
+//      {content}
+//      <p>Trying stuff</p>
+//      <p>Trying stuff</p>
+//      <p>Trying stuff</p>
+//      <p>Trying stuff</p>
+//      <p>Trying stuff</p>
+//      <p>Trying stuff</p>
+//
+//      </header>
+//
+//    </div>
+//  );
 }
 
 export default App;

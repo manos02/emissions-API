@@ -22,7 +22,6 @@ class CountriesISO extends React.Component {
     try {
       const response = await CountriesISOService.getCountriesISO(this.props.params);
       const { iso, name, data } = response.data;
-      console.log(data);
 
       this.setState({
         country: {
@@ -49,7 +48,6 @@ class CountriesISO extends React.Component {
             <p>GDP: {item.generalData.gdp}</p>
             <p>Population: {item.generalData.population}</p>
 
-            <h2>Year: {item.year}</h2>
             <h2>Emission Data:</h2>
             <p>CO2: {item.emissionData.co2}</p>
             <p>CH4: {item.emissionData.ch4}</p>

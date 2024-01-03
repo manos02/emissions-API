@@ -24,7 +24,7 @@ export default function App() {
           <Route exact path="countries" element={<Countries />} />
           <Route exact path="countries/year:year" element={<CountriesYearYear />} />
           <Route exact path="countries/:iso" element={<CountriesISO />} />
-          <Route exact path="countries/:iso/:year}" element={<CountriesYear />} />
+          <Route exact path="countries/:iso/:year" element={<CountriesYear />} />
 
           <Route path="continents" element={<Continents />} />
           <Route path="continents/year:year" element={<ContinentsYearYear />} />

@@ -15,7 +15,6 @@ const Layout = () => {
       <a className = 'Layout-nav-item' href="/countries">Countries</a>
       <a className = 'Layout-nav-item' href="/continents">Continents</a>
       </Nav>
-      <button className = 'Layout-login'>Log in</button>
       </Container>
       <Outlet />
     </Navbar>

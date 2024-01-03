@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class CountriesISOService {
 
-  getCountriesISO(iso){
+  getCountriesISO(iso) {
     var isoString = iso["iso"];
     return axios.get(`http://localhost:51417/countries/${isoString}`);
   }
