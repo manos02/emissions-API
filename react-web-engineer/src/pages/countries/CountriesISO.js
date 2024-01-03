@@ -20,6 +20,7 @@ class CountriesISO extends React.Component {
 
   async componentDidMount() {
     try {
+      console.log(this.props.params);
       const response = await CountriesISOService.getCountriesISO(this.props.params);
       const { iso, name, data } = response.data;
 

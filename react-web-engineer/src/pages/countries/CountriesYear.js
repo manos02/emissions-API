@@ -39,9 +39,7 @@ class CountriesYear extends React.Component {
 
   async componentDidMount() {
       try {
-
         const response = await CountriesISOYService.getCountriesISOYear(this.props.params);;
-        console.log(response.data.year);
 
         this.setState({
           country: {

@@ -9,7 +9,7 @@ import ContinentsYearYear from "./pages/continents/ContinentsYearYear";
 import Countries from "./pages/countries/Countries";
 import CountriesISO from "./pages/countries/CountriesISO";
 import CountriesYear from "./pages/countries/CountriesYear";
-import CountriesYearYear from "./pages/countries/CountriesYearYear";
+import CountriesYY from "./pages/countries/CountriesYearYear";
 
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
@@ -22,7 +22,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route exact path="countries" element={<Countries />} />
-          <Route exact path="countries/year:year" element={<CountriesYearYear />} />
+          <Route exact path="countries/year/:year" element={<CountriesYY />} />
           <Route exact path="countries/:iso" element={<CountriesISO />} />
           <Route exact path="countries/:iso/:year" element={<CountriesYear />} />
 
