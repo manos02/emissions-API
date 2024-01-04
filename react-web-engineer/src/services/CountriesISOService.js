@@ -2,9 +2,11 @@ import axios from 'axios';
 
 class CountriesISOService {
 
-  getCountriesISO(iso) {
+  getCountriesISO(iso, filter) {
     var isoString = iso["iso"];
-    return axios.get(`http://localhost:51417/countries/${isoString}`);
+    const queryParams = new URLSearchParams(filter).toString();
+    const url = `http://localhost:51417/countries/${isoString}?${queryParams}`;
+    return axios.get(url);
   }
 }
 

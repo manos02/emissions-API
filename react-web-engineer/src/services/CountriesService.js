@@ -2,10 +2,11 @@ import axios from 'axios';
 
 class CountriesService {
 
-  getCountries(){
-    return (axios.get('http://localhost:51417/countries'));
+  getCountries(filter) {
+  const queryParams = new URLSearchParams(filter).toString();
+  const url = `http://localhost:51417/countries?${queryParams}`;
+  return (axios.get(url));
   }
-
 }
 
 export default new CountriesService;

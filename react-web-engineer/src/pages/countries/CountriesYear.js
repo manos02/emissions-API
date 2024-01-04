@@ -1,9 +1,14 @@
 import React from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYService from "../../services/CountriesISOYService";
 
 function withParams(Component) {
-  return props => <Component {...props} params={useParams()} />;
+  return (props) => {
+    const routeParams = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    return <Component {...props} params={routeParams} queryParams={queryParams} />;
+  };
 }
 
 class CountriesYear extends React.Component {
@@ -39,8 +44,8 @@ class CountriesYear extends React.Component {
 
   async componentDidMount() {
       try {
-        const response = await CountriesISOYService.getCountriesISOYear(this.props.params);;
-
+        const response = await CountriesISOYService.getCountriesISOYear(this.props.params, this.props.queryParams);
+        console.log(response.data);
         this.setState({
           country: {
             year: response.data.year,
@@ -56,33 +61,51 @@ class CountriesYear extends React.Component {
     }
 
   render() {
-      return (
-        <div>
-          <h2>Year: {this.state.country.year}</h2>
+    const { country } = this.state;
 
-          <h2>General Data:</h2>
-          <p>GDP: {this.state.country.generalData.gdp}</p>
-          <p>Population: {this.state.country.generalData.population}</p>
+    return (
+      <div>
+        {country.year && <h2>Year: {country.year}</h2>}
 
-          <h2>Emission Data:</h2>
-          <p>CO2: {this.state.country.emissionData.co2}</p>
-          <p>CH4: {this.state.country.emissionData.ch4}</p>
-          <p>N20: {this.state.country.emissionData.n20}</p>
-          <p>Total ghg: {this.state.country.emissionData.ghg}</p>
+        <h2>General Data:</h2>
+        {country.generalData && (
+          <>
+            <p>GDP: {country.generalData.gdp}</p>
+            <p>Population: {country.generalData.population}</p>
+          </>
+        )}
 
-          <h2>Energy Data:</h2>
-          <p>Energy_per_cap: {this.state.country.energyData.energy_per_cap}</p>
-          <p>Energy_per_ghg: {this.state.country.emissionData.energy_per_ghg}</p>
+        <h2>Emission Data:</h2>
+        {country.emissionData && (
+          <>
+            <p>CO2: {country.emissionData.co2}</p>
+            <p>CH4: {country.emissionData.ch4}</p>
+            <p>N20: {country.emissionData.n20}</p>
+            <p>Total ghg: {country.emissionData.ghg}</p>
+          </>
+        )}
 
-          <h2>Temperature Data:</h2>
-          <p>Change ghg: {this.state.country.temperatureData.change_ghg}</p>
-          <p>Change co2: {this.state.country.temperatureData.change_co2}</p>
-          <p>Change ch4: {this.state.country.temperatureData.change_ch4}</p>
-          <p>Change n20: {this.state.country.temperatureData.change_n20}</p>
-          <p>Shares: {this.state.country.temperatureData.shares}</p>
-        </div>
-      );
-    }
+        <h2>Energy Data:</h2>
+        {country.energyData && (
+          <>
+            <p>Energy_per_cap: {country.energyData.energy_per_cap}</p>
+            <p>Energy_per_ghg: {country.emissionData.energy_per_ghg}</p>
+          </>
+        )}
+
+        <h2>Temperature Data:</h2>
+        {country.temperatureData && (
+          <>
+            <p>Change ghg: {country.temperatureData.change_ghg}</p>
+            <p>Change co2: {country.temperatureData.change_co2}</p>
+            <p>Change ch4: {country.temperatureData.change_ch4}</p>
+            <p>Change n20: {country.temperatureData.change_n20}</p>
+            <p>Shares: {country.temperatureData.shares}</p>
+          </>
+        )}
+      </div>
+    );
   }
+}
 
   export default withParams(CountriesYear);

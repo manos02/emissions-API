@@ -1,9 +1,14 @@
 import React from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOService from "../../services/CountriesISOService";
 
 function withParams(Component) {
-  return props => <Component {...props} params={useParams()} />;
+  return (props) => {
+    const routeParams = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    return <Component {...props} params={routeParams} queryParams={queryParams} />;
+  };
 }
 
 class CountriesISO extends React.Component {
@@ -20,8 +25,7 @@ class CountriesISO extends React.Component {
 
   async componentDidMount() {
     try {
-      console.log(this.props.params);
-      const response = await CountriesISOService.getCountriesISO(this.props.params);
+      const response = await CountriesISOService.getCountriesISO(this.props.params, this.props.queryParams);
       const { iso, name, data } = response.data;
 
       this.setState({

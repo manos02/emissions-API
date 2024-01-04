@@ -2,9 +2,12 @@ import axios from 'axios';
 
 class CountriesISOYYService {
 
-  getCountriesYY(year) {
+  getCountriesYY(year, filter) {
     var yearString = year["year"];
-    return axios.get(`http://localhost:51417/countries/year${yearString}`);
+    const queryParams = new URLSearchParams(filter).toString();
+    const url = `http://localhost:51417/countries/year${yearString}?${queryParams}`
+    console.log(url);
+    return axios.get(url);
   }
 }
 

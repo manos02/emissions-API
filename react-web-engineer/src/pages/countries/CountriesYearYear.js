@@ -1,9 +1,14 @@
 import React from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYYService from "../../services/CountriesISOYYService";
 
 function withParams(Component) {
-  return props => <Component {...props} params={useParams()} />;
+  return (props) => {
+    const routeParams = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    return <Component {...props} params={routeParams} queryParams={queryParams} />;
+  };
 }
 
 class CountriesYY extends React.Component {
@@ -16,7 +21,7 @@ class CountriesYY extends React.Component {
 
   async componentDidMount() {
     try {
-      const response = await CountriesISOYYService.getCountriesYY(this.props.params);
+      const response = await CountriesISOYYService.getCountriesYY(this.props.params, this.props.queryParams);
       this.setState({ countriesYY: response.data });
 
     } catch (error) {

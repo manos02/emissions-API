@@ -1,5 +1,17 @@
 import React from "react";
+import { useParams, useLocation } from 'react-router-dom';
 import CountriesService from "../../services/CountriesService";
+
+function withParams(Component) {
+  return (props) => {
+    const routeParams = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    return <Component {...props} params={routeParams} queryParams={queryParams} />;
+  };
+}
+
+
 
 class Countries extends React.Component {
   constructor(props) {
@@ -10,7 +22,8 @@ class Countries extends React.Component {
   }
 
   componentDidMount() {
-    CountriesService.getCountries().then((response) => {
+
+    CountriesService.getCountries(this.props.queryParams).then((response) => {
       this.setState({countries : response.data})
     })
   }
@@ -46,4 +59,4 @@ class Countries extends React.Component {
   }
 }
 
-export default Countries;
+export default withParams(Countries);
