@@ -67,6 +67,22 @@ class CountriesYear extends React.Component {
 
     return (
       <div>
+
+
+      <form>
+        <label>
+          Datatype returned:
+          <select name="dataType">
+            <option value="4">FullData</option>
+            <option value="1">Emission data</option>
+            <option value="2">Energy Data</option>
+            <option value="3">General Data</option>
+            <option value="0">Temperature Data</option>
+          </select>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+
         <h2>{isoString}</h2>
         {country.year && <h2>Year: {country.year}</h2>}
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import CountriesService from "../../services/CountriesService";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +17,7 @@ function Countries() {
     const [countries, setCountries] = useState([]);
 
     const location = useLocation();
+    console.log(location);
     const queryParams = new URLSearchParams(location.search);
   
     const componentDidMount = () => {
@@ -62,7 +63,7 @@ function Countries() {
         </label>
         <label>
           Limit of items returned:
-          <input type="limit" name="offset" placeholder="Enter limit"></input>
+          <input type="text" name="limit" placeholder="Enter limit"></input>
         </label>
         <label>
           Offset of items:
