@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYService from "../../services/CountriesISOYService";
 
@@ -11,11 +11,8 @@ function withParams(Component) {
   };
 }
 
-class CountriesYear extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      country: {
+function CountriesYear() {
+    const[countryYear, setCountryYear] = useState({
         year: 0,
         generalData: {
           gdp: 0,
@@ -39,31 +36,31 @@ class CountriesYear extends React.Component {
           shares: 0,
         },
       }
-    }
-  }
+    )
 
-  async componentDidMount() {
+    const params = useParams();
+  
+
+  const componentDidMount = async() => {
       try {
-        const response = await CountriesISOYService.getCountriesISOYear(this.props.params, this.props.queryParams);
+        const response = await CountriesISOYService.getCountriesISOYear(params);
         console.log(response.data);
-        this.setState({
-          country: {
+        setCountryYear({
             year: response.data.year,
             generalData: response.data.generalData,
             emissionData: response.data.emissionData,
             energyData: response.data.energyData,
             temperatureData: response.data.temperatureData,
           },
-        });
+        );
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
     }
 
-  render() {
-    const { country } = this.state;
+    componentDidMount();
 
-    var isoString = this.props.params["iso"];
+    var isoString = params["iso"];
 
     return (
       <div>
@@ -84,47 +81,46 @@ class CountriesYear extends React.Component {
       </form>
 
         <h2>{isoString}</h2>
-        {country.year && <h2>Year: {country.year}</h2>}
+        {countryYear.year && <h2>Year: {countryYear.year}</h2>}
 
         <h2>General Data:</h2>
-        {country.generalData && (
+        {countryYear.generalData && (
           <>
-            <p>GDP: {country.generalData.gdp}</p>
-            <p>Population: {country.generalData.population}</p>
+            <p>GDP: {countryYear.generalData.gdp}</p>
+            <p>Population: {countryYear.generalData.population}</p>
           </>
         )}
 
         <h2>Emission Data:</h2>
-        {country.emissionData && (
+        {countryYear.emissionData && (
           <>
-            <p>CO2: {country.emissionData.co2}</p>
-            <p>CH4: {country.emissionData.ch4}</p>
-            <p>N20: {country.emissionData.n20}</p>
-            <p>Total ghg: {country.emissionData.ghg}</p>
+            <p>CO2: {countryYear.emissionData.co2}</p>
+            <p>CH4: {countryYear.emissionData.ch4}</p>
+            <p>N20: {countryYear.emissionData.n20}</p>
+            <p>Total ghg: {countryYear.emissionData.ghg}</p>
           </>
         )}
 
         <h2>Energy Data:</h2>
-        {country.energyData && (
+        {countryYear.energyData && (
           <>
-            <p>Energy_per_cap: {country.energyData.energy_per_cap}</p>
-            <p>Energy_per_ghg: {country.emissionData.energy_per_ghg}</p>
+            <p>Energy_per_cap: {countryYear.energyData.energy_per_cap}</p>
+            <p>Energy_per_ghg: {countryYear.emissionData.energy_per_ghg}</p>
           </>
         )}
 
         <h2>Temperature Data:</h2>
-        {country.temperatureData && (
+        {countryYear.temperatureData && (
           <>
-            <p>Change ghg: {country.temperatureData.change_ghg}</p>
-            <p>Change co2: {country.temperatureData.change_co2}</p>
-            <p>Change ch4: {country.temperatureData.change_ch4}</p>
-            <p>Change n20: {country.temperatureData.change_n20}</p>
-            <p>Shares: {country.temperatureData.shares}</p>
+            <p>Change ghg: {countryYear.temperatureData.change_ghg}</p>
+            <p>Change co2: {countryYear.temperatureData.change_co2}</p>
+            <p>Change ch4: {countryYear.temperatureData.change_ch4}</p>
+            <p>Change n20: {countryYear.temperatureData.change_n20}</p>
+            <p>Shares: {countryYear.temperatureData.shares}</p>
           </>
         )}
       </div>
     );
   }
-}
 
   export default withParams(CountriesYear);

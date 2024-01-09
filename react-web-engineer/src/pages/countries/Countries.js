@@ -17,7 +17,6 @@ function Countries() {
     const [countries, setCountries] = useState([]);
 
     const location = useLocation();
-    console.log(location);
     const queryParams = new URLSearchParams(location.search);
   
     const componentDidMount = () => {
