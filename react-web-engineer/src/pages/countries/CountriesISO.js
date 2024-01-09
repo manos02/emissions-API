@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useSearchParams} from 'react-router-dom';
 import CountriesISOService from "../../services/CountriesISOService";
 import { useNavigate } from "react-router-dom";
 import ".././Layout.css";
@@ -23,6 +23,8 @@ function CountriesISO(){
 );
   const params = useParams()
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
   const goRouteISOYear = (iso, year) => {
     navigate(`/countries/${iso}/${year}`);
@@ -31,13 +33,13 @@ function CountriesISO(){
 
   const componentDidMount= async() => {
     try {
-      const response = await CountriesISOService.getCountriesISO(params);
+      const response = await CountriesISOService.getCountriesISO(params, queryParams);
       const {iso, name, data } = response.data;
       setCountry({
           iso: iso,
           name: name,
           data: data,
-        },
+        }
       );
 
     } catch (error) {
@@ -48,11 +50,48 @@ function CountriesISO(){
 
   componentDidMount();
 
-  
     return (
       <div>
+        
         <h1>{country.iso}</h1>
         <h1>{country.name}</h1>
+
+        <form>
+        <label>
+          Datatype returned:
+          <select name="dataType">
+            <option value="4">FullData</option>
+            <option value="1">Emission data</option>
+            <option value="2">Energy Data</option>
+            <option value="3">General Data</option>
+            <option value="0">Temperature Data</option>
+          </select>
+        </label>
+        <label>
+          Order:
+          <select name="order">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+          </select>
+        </label>
+        <label>
+          Limit of items returned:
+          <input type="text" name="limit" placeholder="Enter limit"></input>
+        </label>
+        <label>
+          Offset of items:
+          <input type="text" name="offset" placeholder="Enter offset"></input>
+        </label>
+        <label>
+          Lower bound year:
+          <input type="text" name="lower" placeholder="Enter lower bound"></input>
+        </label>
+        <label>
+          Upper bound year:
+          <input type="text" name="upper" placeholder="Enter upper bound"></input>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
 
         {country.data.map((item, index) => (
           <div key={index} className="ISO">

@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYYService from "../../services/CountriesISOYYService";
+import { useNavigate } from "react-router-dom";
 
 function withParams(Component) {
   return (props) => {
@@ -11,30 +12,34 @@ function withParams(Component) {
   };
 }
 
-class CountriesYY extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      countriesYY : []
-    }
-  }
+function CountriesYY() {
 
-  async componentDidMount() {
+  const[countriesYY, setCountriesYY] = useState([]);
+  const routeParams = useParams();
+  const navigate = useNavigate();
+
+  const goRouteISO = (iso) => {
+    navigate(`/countries/${iso}`);
+  };
+
+  const componentDidMount= async() => {
     try {
-      const response = await CountriesISOYYService.getCountriesYY(this.props.params, this.props.queryParams);
-      this.setState({ countriesYY: response.data });
+      const response = await CountriesISOYYService.getCountriesYY(routeParams);
+      setCountriesYY(response.data);
 
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
   }
 
-  render() {
+  componentDidMount();
+
     return (
       <div>
-        {this.state.countriesYY.map((item, index) => (
+        {countriesYY.map((item, index) => (
           <div key={index} className="country-card">
-            <h2>Name: {item.name}</h2>
+            <h2 onClick={()=> goRouteISO(item.iso)}>Name: {item.name}</h2>
+            <h2 onClick={()=> goRouteISO(item.iso)}>ISO: {item.iso}</h2>
 
             <div className="section">
               <h3>General Data:</h3>
@@ -68,7 +73,7 @@ class CountriesYY extends React.Component {
         ))}
       </div>
     );
-  }
+  
 }
 
 export default withParams(CountriesYY);

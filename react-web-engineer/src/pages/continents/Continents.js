@@ -1,20 +1,21 @@
 import React, {useState} from "react";
 import ContinentsService from "../../services/ContinentsService";
-import { useNavigate } from "react-router-dom";
-
-function onClickDesc(){
-}
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Continents() {
       const [continents, setContinents] = useState([]);
       const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
   const goRouteName = (name) => {
     navigate(`/continents/${name}`);
   };
 
+  
+
   const componentDidMount= ()=>{
-    ContinentsService.getContinents().then((response) => {
+    ContinentsService.getContinents(queryParams).then((response) => {
       setContinents(response.data)
     })
   }
@@ -26,7 +27,26 @@ function Continents() {
     <div>
       <div>
         <h1>Continents</h1>
-        <button onClick={onClickDesc} >Descendng</button>
+        
+        <form>
+        <label>
+          Order:
+          <select name="order">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+          </select>
+        </label>
+        <label>
+          Limit of items returned:
+          <input type="text" name="limit" placeholder="Enter limit"></input>
+        </label>
+        <label>
+          Offset of items:
+          <input type="text" name="offset" placeholder="Enter offset"></input>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+
       </div>
       <table border="1px solid">
         <thead>
