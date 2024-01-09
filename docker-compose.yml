@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.2.0
+    environment:
+      MYSQL_DATABASE: emissions
+      MYSQL_USER: springuser
+      MYSQL_PASSWORD: emissions123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data:/var/lib/mysql
+    restart: always
+
+  react-app:
+    build:
+      context: ./react-web-engineer
+    ports:
+      - "3000:3000"
+    environment:
+      - http://localhost:51417
+
+  backend-spring:
+    depends_on:
+      - db
+    build:
+      context: ./Backend
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.defer-datasource-initialization": "true",
+        "spring.sql.init.data-locations": "classpath:data.sql",
+        "server.port": "51417",
+        "spring.datasource.url": "jdbc:mysql://localhost:3306/emissions",
+        "spring.datasource.username": "springuser",
+        "spring.datasource.password": "emissions123",
+        "spring.datasource.driver-class-name": "com.mysql.cj.jdbc.Driver",
+        "spring.jpa.hibernate.ddl-auto": "update",
+        "server.error.whitelabel.enabled": "false",
+        "spring.sql.init.mode": "always"
+      }'
+    ports:
+      - "51417:51417"
+
+
