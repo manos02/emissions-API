@@ -63,8 +63,11 @@ class CountriesYear extends React.Component {
   render() {
     const { country } = this.state;
 
+    var isoString = this.props.params["iso"];
+
     return (
       <div>
+        <h2>{isoString}</h2>
         {country.year && <h2>Year: {country.year}</h2>}
 
         <h2>General Data:</h2>

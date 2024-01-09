@@ -1,24 +1,33 @@
-import React from "react";
+import React, {useState} from "react";
 import ContinentsService from "../../services/ContinentsService";
+import { useNavigate } from "react-router-dom";
 
-class Continents extends React.Component{
-  constructor(props){
-    super(props)
-    this.state = {
-      continents: []
-    }
-  }
+function onClickDesc(){
+}
 
-  componentDidMount(){
+function Continents() {
+      const [continents, setContinents] = useState([]);
+      const navigate = useNavigate();
+
+  const goRouteName = (name) => {
+    navigate(`/continents/${name}`);
+  };
+
+  const componentDidMount= ()=>{
     ContinentsService.getContinents().then((response) => {
-      this.setState({continents : response.data})
+      setContinents(response.data)
     })
   }
 
-  render(){
+
+  componentDidMount();
+
     return (
     <div>
-      <h1>Continents</h1>
+      <div>
+        <h1>Continents</h1>
+        <button onClick={onClickDesc} >Descendng</button>
+      </div>
       <table border="1px solid">
         <thead>
           <tr>
@@ -27,9 +36,9 @@ class Continents extends React.Component{
         </thead>
         <tbody>
           {
-            this.state.continents.map(
+            continents.map(
               continent => (
-              <tr key = {continent}>
+              <tr key = {continent} onClick={()=> goRouteName(continent)}>
                 <td>{continent}</td>
               </tr>
               )
@@ -41,7 +50,7 @@ class Continents extends React.Component{
 
     </div>
     )
-  }
+  
 
 }
 

@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOService from "../../services/CountriesISOService";
+import { useNavigate } from "react-router-dom";
+import ".././Layout.css";
 
 function withParams(Component) {
   return (props) => {
@@ -11,69 +13,145 @@ function withParams(Component) {
   };
 }
 
-class CountriesISO extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      country: {
-        iso: "iso",
-        name: "name",
-        data: [],
-      },
-    };
-  }
+function CountriesISO(){
 
-  async componentDidMount() {
+  const [country, setCountry] = useState({
+    iso: "iso",
+    name: "name",
+    data: [],
+  },
+);
+  const params = useParams()
+  const navigate = useNavigate();
+
+  const goRouteISOYear = (iso, year) => {
+    navigate(`/countries/${iso}/${year}`);
+  };
+
+
+  const componentDidMount= async() => {
     try {
-      const response = await CountriesISOService.getCountriesISO(this.props.params, this.props.queryParams);
-      const { iso, name, data } = response.data;
-
-      this.setState({
-        country: {
+      const response = await CountriesISOService.getCountriesISO(params);
+      const {iso, name, data } = response.data;
+      setCountry({
           iso: iso,
           name: name,
           data: data,
         },
-      });
+      );
+
     } catch (error) {
-      console.error("Error fetching data:", error.message);
+      console.log(error);
     }
   }
+  
 
-  render() {
+  componentDidMount();
+
+  
     return (
       <div>
-        <h1>{this.state.country.iso}</h1>
-        <h1>{this.state.country.name}</h1>
+        <h1>{country.iso}</h1>
+        <h1>{country.name}</h1>
 
-        {this.state.country.data.map((item, index) => (
-          <div key={index}>
-            <h2>Year: {item.year}</h2>
-            <h2>General Data:</h2>
-            <p>GDP: {item.generalData.gdp}</p>
-            <p>Population: {item.generalData.population}</p>
+        {country.data.map((item, index) => (
+          <div key={index} className="ISO">
 
+              <a className = 'Layout-button' onClick={()=> goRouteISOYear(country.iso, item.year)}>Year: {item.year}</a>
+
+              <div className="ISO-data">
+            
+            <div className="ISO-data-items">
+              <h2>General Data:</h2>
+              <table border="1px solid">
+        <thead>
+          <tr>
+            <td>GDP</td>
+            <td>Population</td>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+            <td>{item.generalData.gdp}</td>
+            <td>{item.generalData.population}</td>
+              </tr>
+        </tbody>
+
+      </table>
+      </div>
+      <div className="ISO-data-items">
             <h2>Emission Data:</h2>
-            <p>CO2: {item.emissionData.co2}</p>
-            <p>CH4: {item.emissionData.ch4}</p>
-            <p>N20: {item.emissionData.n20}</p>
-            <p>Total ghg: {item.emissionData.ghg}</p>
+            
+            <table border="1px solid">
+        <thead>
+          <tr>
+            <td>co2</td>
+            <td>ch4</td>
+            <td>n20</td>
+            <td>total ghg</td>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+              <td>{item.emissionData.co2}</td>
+            <td>{item.emissionData.ch4}</td>
+            <td>{item.emissionData.n20}</td>
+            <td>{item.emissionData.ghg}</td>
+              </tr>
+        </tbody>
 
+      </table>
+      </div>
+      <div className="ISO-data-items">
             <h2>Energy Data:</h2>
-            <p>Energy_per_cap: {item.energyData.energy_per_cap}</p>
-            <p>Energy_per_ghg: {item.emissionData.energy_per_ghg}</p>
+            <table border="1px solid">
+        <thead>
+          <tr>
+            <td>Energy_per_cap</td>
+            <td>Energy_per_ghg</td>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+            <td>{item.energyData.energy_per_cap}</td>
+            <td>{item.energyData.energy_per_ghg}</td>
+              </tr>
+        </tbody>
 
+      </table>
+</div>
+      <div className="ISO-data-items">
             <h2>Temperature Data:</h2>
-            <p>Change ghg: {item.temperatureData.change_ghg}</p>
-            <p>Change co2: {item.temperatureData.change_co2}</p>
-            <p>Change ch4: {item.temperatureData.change_ch4}</p>
-            <p>Change n20: {item.temperatureData.change_n20}</p>
-            <p>Shares: {item.temperatureData.shares}</p>
+            <table border="1px solid">
+        <thead>
+          <tr>
+            <td>change ghg</td>
+            <td>change co2</td>
+            <td>change ch4</td>
+            <td>change n20</td>
+            <td>shares</td>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+              <td>{item.temperatureData.change_ghg}</td>
+            <td>{item.temperatureData.change_co2}</td>
+            <td>{item.temperatureData.change_ch4}</td>
+            <td>{item.temperatureData.change_n20}</td>
+            <td>{item.temperatureData.shares}</td>
+              </tr>
+        </tbody>
+
+      </table>
+      </div>
+      </div>
+      <a>--------------</a>
           </div>
         ))}
+        
       </div>
     );
   }
-}
+
 
 export default withParams(CountriesISO);

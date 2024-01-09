@@ -20,22 +20,18 @@
   font-family: Verdana;
 }
 
-.Layout-login {
-  transition-duration: 0.3s;
-}
 
-.Layout-login:hover {
+.Layout-button:hover {
   background-color: #04AA6D; /* Green */
   color: black;
 }
 
-.Layout-login {
+.Layout-button {
+  transition-duration: 0.3s;
   font-family: Verdana;
   border-radius: 5px;
-  margin-left: auto;
   background-color: seagreen;
   color: #fff;
-  padding: 1rem; 
 }
 
 .Layout-nav-item {
@@ -51,4 +47,24 @@
   justify-content: center;
   color: white;
   padding: 1rem; 
+}
+
+.ISO{
+  display: flexbox;
+  flex-direction: row;
+}
+
+.ISO-data{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.ISO-data-items{
+  display: flex;
+  flex-direction: column;
+}
+
+.ISO-line{
+  background-color: #04AA6D;
 }

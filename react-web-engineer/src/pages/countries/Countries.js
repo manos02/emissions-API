@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesService from "../../services/CountriesService";
+import { useNavigate } from "react-router-dom";
+
+
 
 function withParams(Component) {
   return (props) => {
@@ -11,25 +14,34 @@ function withParams(Component) {
   };
 }
 
+function useGoRouteISO(iso) {
+  const navigate = useNavigate();
+  navigate(`/countries/${iso}`);
+};
 
+function Countries() {
+    const [countries, setCountries] = useState([]);
 
-class Countries extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      countries: []
-    }
-  }
+  const componentDidMount = () => {
 
-  componentDidMount() {
-
-    CountriesService.getCountries(this.props.queryParams).then((response) => {
-      this.setState({countries : response.data})
+    CountriesService.getCountries().then((response) => {
+      console.log(response.data)
+      setCountries(response.data)
     })
-  }
+  };
 
-  render(){
+
+  const navigate = useNavigate();
+
+  const goRouteISO = (iso) => {
+    navigate(`/countries/${iso}`);
+  };
+
+  componentDidMount();
+
+  
     return (
+      
     <div>
       <h1>Countries</h1>
       <table border="1px solid">
@@ -41,9 +53,9 @@ class Countries extends React.Component {
         </thead>
         <tbody>
           {
-            this.state.countries.map(
+            countries.map(
               country => (
-              <tr key = {country.iso}>
+              <tr key = {country.iso} onClick={()=> goRouteISO(country.iso)}>
                 <td>{country.iso}</td>
                 <td>{country.name}</td>
               </tr>
@@ -56,7 +68,7 @@ class Countries extends React.Component {
 
     </div>
     )
-  }
+  
 }
 
 export default withParams(Countries);
