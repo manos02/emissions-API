@@ -14,11 +14,6 @@ function withParams(Component) {
   };
 }
 
-function useGoRouteISO(iso) {
-  const navigate = useNavigate();
-  navigate(`/countries/${iso}`);
-};
-
 function Countries() {
     const [countries, setCountries] = useState([]);
 
