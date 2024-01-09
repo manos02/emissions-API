@@ -4,7 +4,6 @@ import CountriesService from "../../services/CountriesService";
 import { useNavigate } from "react-router-dom";
 
 
-
 function withParams(Component) {
   return (props) => {
     const routeParams = useParams();
@@ -17,9 +16,12 @@ function withParams(Component) {
 function Countries() {
     const [countries, setCountries] = useState([]);
 
-  const componentDidMount = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+  
+    const componentDidMount = () => {
 
-    CountriesService.getCountries().then((response) => {
+    CountriesService.getCountries(queryParams).then((response) => {
       console.log(response.data)
       setCountries(response.data)
     })
@@ -36,9 +38,41 @@ function Countries() {
 
   
     return (
+
+      
       
     <div>
+
       <h1>Countries</h1>
+
+      <form>
+        <label>
+          Filter by:
+          <select name="filter">
+            <option value="name">Name</option>
+            <option value="ISO">ISO</option>
+          </select>
+        </label>
+        <label>
+          Order:
+          <select name="order">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+          </select>
+        </label>
+        <label>
+          Limit of items returned:
+          <input type="limit" name="offset" placeholder="Enter limit"></input>
+        </label>
+        <label>
+          Offset of items:
+          <input type="text" name="offset" placeholder="Enter offset"></input>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+
+      
+
       <table border="1px solid">
         <thead>
           <tr>

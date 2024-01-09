@@ -20,7 +20,7 @@ public class CountriesController {
     /**
      * The method for the get request of the /countries path.
      *
-     * @param filter the filter to filter by
+     * @param filter the filter to filter by ()
      * @param order  the order to order by
      * @param limit  the limit of data returned
      * @param offset the offset of the data returned
