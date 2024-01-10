@@ -3,16 +3,6 @@ import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import CountriesService from "../../services/CountriesService";
 import { useNavigate } from "react-router-dom";
 
-
-function withParams(Component) {
-  return (props) => {
-    const routeParams = useParams();
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    return <Component {...props} params={routeParams} queryParams={queryParams} />;
-  };
-}
-
 function Countries() {
     const [countries, setCountries] = useState([]);
 
@@ -71,6 +61,17 @@ function Countries() {
         <input type="submit" value="Submit" />
       </form>
 
+      <form>
+        <label>
+          Enter a new country ISO:
+          <input type="text" placeholder="Enter ISO" required="true"></input>
+        </label>
+        <label>
+          Enter a new country name:
+          <input type="text" placeholder="Enter name" required="true"></input>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
       
 
       <table border="1px solid">
@@ -100,4 +101,4 @@ function Countries() {
   
 }
 
-export default withParams(Countries);
+export default Countries;

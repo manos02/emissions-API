@@ -2,15 +2,6 @@ import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYService from "../../services/CountriesISOYService";
 
-function withParams(Component) {
-  return (props) => {
-    const routeParams = useParams();
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    return <Component {...props} params={routeParams} queryParams={queryParams} />;
-  };
-}
-
 function CountriesYear() {
     const[countryYear, setCountryYear] = useState({
         year: 0,
@@ -123,4 +114,4 @@ function CountriesYear() {
     );
   }
 
-  export default withParams(CountriesYear);
+  export default CountriesYear;

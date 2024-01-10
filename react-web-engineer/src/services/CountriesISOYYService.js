@@ -4,8 +4,7 @@ class CountriesISOYYService {
 
   getCountriesYY(year, filter) {
     var yearString = year["year"];
-    const queryParams = new URLSearchParams(filter).toString();
-    const url = `http://localhost:51417/countries/year${yearString}?${queryParams}`
+    const url = `http://localhost:51417/countries/year${yearString}?${filter}`
     console.log(url);
     return axios.get(url);
   }

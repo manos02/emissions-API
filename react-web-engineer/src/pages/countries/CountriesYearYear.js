@@ -3,15 +3,6 @@ import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYYService from "../../services/CountriesISOYYService";
 import { useNavigate } from "react-router-dom";
 
-function withParams(Component) {
-  return (props) => {
-    const routeParams = useParams();
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    return <Component {...props} params={routeParams} queryParams={queryParams} />;
-  };
-}
-
 function CountriesYY() {
 
   const[countriesYY, setCountriesYY] = useState([]);
@@ -76,4 +67,4 @@ function CountriesYY() {
   
 }
 
-export default withParams(CountriesYY);
+export default CountriesYY;

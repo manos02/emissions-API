@@ -4,15 +4,6 @@ import CountriesISOService from "../../services/CountriesISOService";
 import { useNavigate } from "react-router-dom";
 import ".././Layout.css";
 
-function withParams(Component) {
-  return (props) => {
-    const routeParams = useParams();
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    return <Component {...props} params={routeParams} queryParams={queryParams} />;
-  };
-}
-
 function CountriesISO(){
 
   const [country, setCountry] = useState({
@@ -193,4 +184,4 @@ function CountriesISO(){
   }
 
 
-export default withParams(CountriesISO);
+export default CountriesISO;
