@@ -1,9 +1,9 @@
 package com.group25.webapp.service;
 
-import com.group25.webapp.errors.NotFound;
+import com.group25.webapp.errors.MyResourceNotFoundException;
+import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.model.data.*;
 import com.group25.webapp.model.entities.ContinentEntity;
-import com.group25.webapp.model.entities.CountryEntity;
 import com.group25.webapp.model.repository.ContinentRepository;
 import com.group25.webapp.util.JSON;
 import com.group25.webapp.util.ListManipulation;
@@ -24,14 +24,6 @@ public class ContinentsService {
     @Autowired
     private ContinentRepository continentRepository;
 
-    /**
-     * Generates a list of countrySummaries, returned in the order of the database.
-     *
-     * @return The list of countrySummaries that was generated.
-     */
-    private List<String> continentSummaries() {
-        return continentRepository.findDistinctContinent();
-    }
 
     /**
      * Generates a list of continentSummaries, filtered and ordered by specific parameters.
@@ -41,8 +33,8 @@ public class ContinentsService {
      * @param offset The offset the data should have.
      * @return The generated list of continent summaries, in JSON format.
      */
-    public String JSONContinentSummaries(String order, Integer limit, Integer offset) {
-        List<String> nameList = continentSummaries();
+    public String JSONContinentSummaries(String order, Integer limit, Integer offset) throws WrongQueryException {
+        List<String> nameList = continentRepository.findDistinctContinent();
 
         nameList = basicFiltering(nameList, order, limit, offset);
 
@@ -61,11 +53,11 @@ public class ContinentsService {
      * @param upper    the upper bounds of year
      * @return the summaryData with a list of datatype of the country specified by ISO
      */
-    public String JSONContinentSummaryByName(String name, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) throws NotFound {
+    public String JSONContinentSummaryByName(String name, Integer dataType, String order, Integer limit, Integer offset, Integer lower, Integer upper) throws MyResourceNotFoundException, WrongQueryException {
         ContinentEntity continent = continentRepository.findFirstByName(name);
 
         if (continent == null) {
-            throw new NotFound();
+            throw new MyResourceNotFoundException();
         }
 
         List<Data> dataList = specificData(name, dataType);
@@ -84,10 +76,10 @@ public class ContinentsService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType) throws NotFound {
+    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType) throws MyResourceNotFoundException {
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
         if (continentEntity == null) {
-            throw new NotFound();
+            throw new MyResourceNotFoundException();
         }
 
         Data data = continentEntity.retrieveDataByType(dataType);
@@ -108,11 +100,11 @@ public class ContinentsService {
      * @return list of data in json
      */
     public String JSONGetYearData(Integer year, Integer dataType, String order, Integer limit, Integer offset,
-                                  Integer lower, Integer upper, String filter) throws NotFound {
+                                  Integer lower, Integer upper, String filter) throws MyResourceNotFoundException, WrongQueryException {
         List<ContinentEntity> continentFullData = continentRepository.findByYear(year);
 
         if (continentFullData.isEmpty()) {
-            throw new NotFound();
+            throw new MyResourceNotFoundException();
         }
         List<SummaryData> finalList = new ArrayList<>();
 
@@ -142,8 +134,11 @@ public class ContinentsService {
      * @param name the ISO of the data
      * @param year the year of the data
      */
-    public void deleteData(String name, Integer year) {
+    public void deleteData(String name, Integer year) throws MyResourceNotFoundException {
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
+        if (continentEntity == null) {
+            throw new MyResourceNotFoundException();
+        }
         continentRepository.delete(continentEntity);
 
     }
@@ -170,8 +165,13 @@ public class ContinentsService {
      * @param updatedContinent the updated data in json format
      * @return the updated data.
      */
-    public String updateData(String name, Integer year, Integer dataType, String updatedContinent) {
+    public String updateData(String name, Integer year, Integer dataType, String updatedContinent) throws MyResourceNotFoundException {
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
+
+        if (continentEntity == null) {
+            throw new MyResourceNotFoundException();
+        }
+
         Data data = null;
 
         switch (dataType) {
@@ -261,14 +261,23 @@ public class ContinentsService {
      * @param <T>      the generic type T
      * @return the list filtered by the parameters
      */
-    public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) {
-        if (order != null && order.equals("descending")) {
+    public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
+        if (order != null) {
+            if (!order.equals("descending") && !order.equals("ascending")) {
+                throw new WrongQueryException();
+            }
             Collections.reverse(dataList);
         }
         if (offset != null) {
+            if (offset > dataList.size()) {
+                throw new WrongQueryException();
+            }
             dataList = ListManipulation.applyOffset(dataList, offset);
         }
         if (limit != null) {
+            if (limit < 0 || limit > dataList.size()) {
+                throw new WrongQueryException();
+            }
             dataList = ListManipulation.applyLimit(dataList, limit);
         }
         return dataList;
@@ -277,16 +286,21 @@ public class ContinentsService {
     /**
      * The method gets all the specified dataType of a specific ISO.
      *
-     * @param name     the ISO
+     * @param name     the name
      * @param dataType the dataType
      * @return the list of Data for a ISO
      */
-    public List<Data> specificData(String name, Integer dataType) {
+    public List<Data> specificData(String name, Integer dataType) throws WrongQueryException {
+
+        if (dataType != null && (dataType < 0 || dataType > 4)) {
+            throw new WrongQueryException();
+        }
+
         List<Data> dataList = new ArrayList<>();
-        List<ContinentEntity> continents = continentRepository.findByName(name);
+        List<ContinentEntity> countries = continentRepository.findByName(name);
 
 
-        for (var it : continents) {
+        for (var it : countries) {
             dataList.add(it.retrieveDataByType(dataType));
         }
         return dataList;

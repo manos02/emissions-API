@@ -1,6 +1,7 @@
 package com.group25.webapp.controllers;
 
-import com.group25.webapp.errors.NotFound;
+import com.group25.webapp.errors.MyResourceNotFoundException;
+import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.service.CountriesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,11 @@ public class CountriesController {
     @GetMapping("/countries")
     public String countriesGet(@RequestParam(required = false) String filter, @RequestParam(required = false) String order,
                                @RequestParam(required = false) Integer limit, @RequestParam(required = false) Integer offset) {
-        return countriesService.JSONCountrySummaries(filter, order, limit, offset);
+        try {
+            return countriesService.JSONCountrySummaries(filter, order, limit, offset);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        }
     }
 
     /**
@@ -51,11 +56,13 @@ public class CountriesController {
                                 @RequestParam(required = false) Integer limit,
                                 @RequestParam(required = false) Integer offset,
                                 @RequestParam(required = false) Integer lower,
-                                @RequestParam(required = false) Integer upper) throws NotFound {
+                                @RequestParam(required = false) Integer upper) {
         try {
             return countriesService.JSONCountrySummaryByISO(ISO, dataType, order, limit, offset, lower, upper);
-        } catch (NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given ISO", e);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country with given ISO", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
 
@@ -86,8 +93,8 @@ public class CountriesController {
                                     @RequestParam(required = false) Integer dataType) {
         try {
             return countriesService.JSONCountrySummaryByISOAndYear(ISO, year, dataType);
-        } catch (NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given ISO and year", e);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country with given ISO and year", e);
         }
     }
 
@@ -104,7 +111,11 @@ public class CountriesController {
     public String countryISOYearPut(@PathVariable String ISO, @PathVariable Integer year,
                                     @RequestParam(required = false) Integer dataType,
                                     @RequestBody String updatedCountry) {
-        return countriesService.updateData(ISO, year, dataType, updatedCountry);
+        try {
+            return countriesService.updateData(ISO, year, dataType, updatedCountry);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country with given ISO and year", e);
+        }
     }
 
     /**
@@ -116,8 +127,12 @@ public class CountriesController {
      */
     @DeleteMapping("/countries/{ISO}/{year}")
     public String countryISOYearDelete(@PathVariable String ISO, @PathVariable Integer year) {
-        countriesService.deleteData(ISO, year);
-        return "successfully deleted";
+        try {
+            countriesService.deleteData(ISO, year);
+            return "successfully deleted";
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country with given ISO and year", e);
+        }
     }
 
     /**
@@ -143,8 +158,10 @@ public class CountriesController {
                                 @RequestParam(required = false) String filter) {
         try {
             return countriesService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper, filter);
-        } catch (NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country for given year", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
 

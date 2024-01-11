@@ -1,7 +1,8 @@
 package com.group25.webapp.controllers;
 
 
-import com.group25.webapp.errors.NotFound;
+import com.group25.webapp.errors.MyResourceNotFoundException;
+import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.service.ContinentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,11 @@ public class ContinentsController {
     @GetMapping("/continents")
     public String continentGet(@RequestParam(required = false) Integer limit, @RequestParam(required = false) String order,
                                @RequestParam(required = false) Integer offset) {
-        return continentsService.JSONContinentSummaries(order, limit, offset);
+        try {
+            return continentsService.JSONContinentSummaries(order, limit, offset);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        }
     }
 
     /**
@@ -51,11 +56,13 @@ public class ContinentsController {
                                   @RequestParam(required = false) Integer limit,
                                   @RequestParam(required = false) Integer offset,
                                   @RequestParam(required = false) Integer lower,
-                                  @RequestParam(required = false) Integer upper) throws ResponseStatusException {
+                                  @RequestParam(required = false) Integer upper) {
         try {
             return continentsService.JSONContinentSummaryByName(name, dataType, order, limit, offset, lower, upper);
-        } catch (NotFound e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry with given name", e);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No continent with given name", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
 
@@ -82,10 +89,10 @@ public class ContinentsController {
      * @return the data entry of a specific continent (identified by name) and year
      */
     @GetMapping("/continents/{name}/{year}")
-    public String continentISOYearGet(@PathVariable String name, @PathVariable Integer year, @RequestParam(required = false) Integer dataType) throws ResponseStatusException {
+    public String continentISOYearGet(@PathVariable String name, @PathVariable Integer year, @RequestParam(required = false) Integer dataType)  {
         try {
             return continentsService.JSONContinentSummaryByNameAndYear(name, year, dataType);
-        } catch (NotFound e) {
+        } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name and year", e);
         }
     }
@@ -103,7 +110,11 @@ public class ContinentsController {
     public String continentISOYearPut(@PathVariable String name, @PathVariable Integer year,
                                       @RequestParam(required = false) Integer dataType,
                                       @RequestBody String updatedContinent) {
-        return continentsService.updateData(name, year, dataType, updatedContinent);
+        try {
+            return continentsService.updateData(name, year, dataType, updatedContinent);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name and year", e);
+        }
     }
 
     /**
@@ -115,8 +126,12 @@ public class ContinentsController {
      */
     @DeleteMapping("/continents/{name}/{year}")
     public String continentISOYearDelete(@PathVariable String name, @PathVariable Integer year) {
-        continentsService.deleteData(name, year);
-        return "successfully deleted";
+        try {
+            continentsService.deleteData(name, year);
+            return "successfully deleted";
+        }  catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No continent with given name and year", e);
+        }
     }
 
     /**
@@ -139,13 +154,13 @@ public class ContinentsController {
                                    @RequestParam(required = false) Integer offset,
                                    @RequestParam(required = false) Integer lower,
                                    @RequestParam(required = false) Integer upper,
-                                   @RequestParam(required = false) String filter) throws ResponseStatusException {
+                                   @RequestParam(required = false) String filter) {
         try {
             return continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper, filter);
-        } catch (NotFound e) {
+        } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
-
-
 }
