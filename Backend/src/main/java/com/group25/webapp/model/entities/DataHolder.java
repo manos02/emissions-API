@@ -1,14 +1,12 @@
 package com.group25.webapp.model.entities;
 
 import com.group25.webapp.model.data.*;
-import com.group25.webapp.model.dataView.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @MappedSuperclass
-public abstract class DataHolder implements EnergyDataView, EmissionDataView, FullDataView, GeneralDataView,
-        TemperatureDataView {
+public abstract class DataHolder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
@@ -51,52 +49,28 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
     @Getter
     @Setter
     @Column(name = "share_of_temperature_change_from_ghg")
-    private Long shareghg;
+    private Double shareghg;
     @Getter
     @Setter
     @Column(name = "temperature_change_from_ch4")
-    private Long temperaturech4;
+    private Double temperaturech4;
     @Getter
     @Setter
     @Column(name = "temperature_change_from_co2")
-    private Long temperatureco2;
+    private Double temperatureco2;
     @Getter
     @Setter
     @Column(name = "temperature_change_from_ghg")
-    private Long temperatureghg;
+    private Double temperatureghg;
     @Getter
     @Setter
     @Column(name = "temperature_change_from_n2o")
-    private Long temperaturen2o;
+    private Double temperaturen2o;
     @Getter
     @Setter
     @Column(name = "total_ghg")
     private Long totalghg;
 
-    @Override
-    public String getEnergyDataJSON() {
-        return getEnergyData().toJson();
-    }
-
-    @Override
-    public String getEmissionDataJSON() {
-        return getEmissionData().toJson();
-    }
-
-    @Override
-    public String getTemperatureDataJSON() {
-        return getTemperatureData().toJson();
-    }
-
-    @Override
-    public String getFullDataJSON() {
-        return getFullData().toJson();
-    }
-
-    @Override
-    public String getGeneralDataJSON() {
-        return getGeneralData().toJson();
-    }
 
     public void setGeneralData(GeneralData generalData) {
         year = generalData.getYear();
@@ -110,7 +84,7 @@ public abstract class DataHolder implements EnergyDataView, EmissionDataView, Fu
         energygdp = energyData.getEnergy_per_ghg();
     }
 
-    public void setEmissionData(EmissionData emissionData) { //EmissionData(year, co2, methane, nitrousoxide, totalghg
+    public void setEmissionData(EmissionData emissionData) {
         year = emissionData.getYear();
         methane = emissionData.getCh4();
         co2 = emissionData.getCo2();

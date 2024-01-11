@@ -64,8 +64,6 @@ public class EmissionData implements Data {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(json, this.getClass());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

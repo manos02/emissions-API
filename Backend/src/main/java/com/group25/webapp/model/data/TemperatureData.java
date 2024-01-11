@@ -16,19 +16,19 @@ public class TemperatureData implements Data {
     private Integer year;
     @Getter
     @Setter
-    private Long shares;
+    private Double shares;
     @Getter
     @Setter
-    private Long change_ch4;
+    private Double change_ch4;
     @Getter
     @Setter
-    private Long change_n20;
+    private Double change_n20;
     @Getter
     @Setter
-    private Long change_co2;
+    private Double change_co2;
     @Getter
     @Setter
-    private Long change_ghg;
+    private Double change_ghg;
 
     /**
      * The constructor for TemperatureData.
@@ -39,7 +39,7 @@ public class TemperatureData implements Data {
      * @param change_co2 the change from co2
      * @param change_ghg the change from ghg
      */
-    public TemperatureData(Integer year, Long shares, Long change_ch4, Long change_n20, Long change_co2, Long change_ghg) {
+    public TemperatureData(Integer year, Double shares, Double change_ch4, Double change_n20, Double change_co2, Double change_ghg) {
         this.shares = shares;
         this.change_ghg = change_ghg;
         this.change_ch4 = change_ch4;
@@ -69,8 +69,6 @@ public class TemperatureData implements Data {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(json, this.getClass());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

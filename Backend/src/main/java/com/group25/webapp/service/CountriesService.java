@@ -152,7 +152,7 @@ public class CountriesService {
         List<SummaryData> finalfinalList = new ArrayList<>();
         for (var it : finalList) {
             List<Data> tempList = new ArrayList<>();
-            tempList.add(it.retriveFullData().retrieveDataByType(dataType));
+            tempList.add(it.retrieveFullData().retrieveDataByType(dataType));
             finalfinalList.add(new SummaryData(it.getISO(), it.getName(), tempList));
         }
 
@@ -262,15 +262,15 @@ public class CountriesService {
     public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
 
         if (filter != null && filter.equals("pop")) {
-            dataList.sort(Comparator.comparing(SummaryData::retriveFullDataPopulation));
+            dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
         }
 
         if (lower != null) {
-            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() < lower);
+            dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
-            dataList.removeIf((SummaryData data) -> data.retriveFullData().population() > upper);
+            dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() > upper);
         }
         Collections.reverse(dataList);
 
@@ -312,8 +312,10 @@ public class CountriesService {
         List<Data> dataList = new ArrayList<>();
         List<CountryEntity> countries = countryRepository.findByISO(ISO);
 
+
         for (var it : countries) {
             dataList.add(it.retrieveDataByType(dataType));
+            System.out.println(it.getTemperatureData().toJson());
         }
         return dataList;
     }
