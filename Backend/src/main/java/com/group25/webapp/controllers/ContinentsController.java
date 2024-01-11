@@ -94,6 +94,8 @@ public class ContinentsController {
             return continentsService.JSONContinentSummaryByNameAndYear(name, year, dataType);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name and year", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
 

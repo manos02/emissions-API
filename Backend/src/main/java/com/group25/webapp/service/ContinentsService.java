@@ -76,10 +76,13 @@ public class ContinentsService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType) throws MyResourceNotFoundException {
+    public String JSONContinentSummaryByNameAndYear(String name, Integer year, Integer dataType) throws MyResourceNotFoundException, WrongQueryException {
         ContinentEntity continentEntity = continentRepository.findFirstByNameAndYear(name, year);
         if (continentEntity == null) {
             throw new MyResourceNotFoundException();
+        }
+        if (dataType != null && (dataType < 0 || dataType > 4)) {
+            throw new WrongQueryException();
         }
 
         Data data = continentEntity.retrieveDataByType(dataType);
@@ -151,7 +154,7 @@ public class ContinentsService {
      */
     public void createData(String name, String jsonYear) {
         ContinentEntity continentEntity = new ContinentEntity();
-        continentEntity.setName(continentRepository.findFirstByName(name).getName());
+        continentEntity.setName(name);
         continentEntity.setYear(JSON.fromJson(jsonYear, int.class));
         continentRepository.save(continentEntity);
     }
@@ -170,6 +173,9 @@ public class ContinentsService {
 
         if (continentEntity == null) {
             throw new MyResourceNotFoundException();
+        }
+        if (dataType == null) {
+            dataType = 4;
         }
 
         Data data = null;
@@ -231,6 +237,7 @@ public class ContinentsService {
      * @param dataList the list of fulldata
      * @param lower    the lower limit
      * @param upper    the upper limit
+     * @param filter filter to be sorted
      * @return the list
      */
     public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
@@ -263,7 +270,7 @@ public class ContinentsService {
      */
     public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
         if (order != null) {
-            if (!order.equals("descending") && !order.equals("ascending")) {
+            if (!order.equals("descending")) {
                 throw new WrongQueryException();
             }
             Collections.reverse(dataList);

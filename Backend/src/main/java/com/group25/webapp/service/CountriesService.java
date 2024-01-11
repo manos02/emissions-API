@@ -106,11 +106,15 @@ public class CountriesService {
      * @param dataType the datatype
      * @return the data in json
      */
-    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType) throws MyResourceNotFoundException {
+    public String JSONCountrySummaryByISOAndYear(String ISO, Integer year, Integer dataType) throws MyResourceNotFoundException, WrongQueryException {
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
 
         if (countryEntity == null) {
             throw new MyResourceNotFoundException();
+        }
+
+        if (dataType != null && (dataType < 0 || dataType > 4)) {
+            throw new WrongQueryException();
         }
 
         Data data = countryEntity.retrieveDataByType(dataType);
@@ -176,14 +180,16 @@ public class CountriesService {
     /**
      * The method creates a countyEntity.
      *
-     * @param ISO      the iso
-     * @param jsonYear the year in json format
+     * @param ISO the iso.
+     * @param newGeneralData the data in Json format.
      */
-    public void createData(String ISO, String jsonYear) {
+    public void createData(String ISO, String newGeneralData) {
         CountryEntity countryEntity = new CountryEntity();
         countryEntity.setISO(ISO);
         countryEntity.setName(countryRepository.findFirstByISO(ISO).getName());
-        countryEntity.setYear(JSON.fromJson(jsonYear, int.class));
+        GeneralData newGData = JSON.fromJson(newGeneralData, GeneralData.class);
+        countryEntity.setGeneralData(newGData);
+        countryEntity.setYear(newGData.getYear());
         countryRepository.save(countryEntity);
     }
 
@@ -197,10 +203,15 @@ public class CountriesService {
      * @return the updated data.
      */
     public String updateData(String ISO, Integer year, Integer dataType, String updatedCountry) throws MyResourceNotFoundException {
+
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
 
         if (countryEntity == null) {
             throw new MyResourceNotFoundException();
+        }
+
+        if (dataType == null) {
+            dataType = 4;
         }
 
         Data data = null;
@@ -295,7 +306,7 @@ public class CountriesService {
      */
     public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
         if (order != null) {
-            if (!order.equals("descending") && !order.equals("ascending")) {
+            if (!order.equals("descending")) {
                 throw new WrongQueryException();
             }
             Collections.reverse(dataList);
@@ -330,7 +341,6 @@ public class CountriesService {
 
         List<Data> dataList = new ArrayList<>();
         List<CountryEntity> countries = countryRepository.findByISO(ISO);
-
 
         for (var it : countries) {
             dataList.add(it.retrieveDataByType(dataType));

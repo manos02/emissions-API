@@ -1,48 +1,19 @@
-Country:
+SummaryData:
   type: object
   required:
     - "name"
-    - "ISO"
+    - "iso"
+    - "data"
   properties:
     name:
-      type: string
-    ISO:
       type: string
     data:
         type: array
         items:
           $ref: "#/Data"
-
-Continent:
-  type: object
-  required:
-    - "name"
-  properties:
-    name:
-      type: string
-    data:
-      type: array
-      items:
-        $ref: "#/Data"
-
-CountrySummary:
-  type: object
-  required:
-    - "name"
-    - "ISO"
-  properties:
-    name:
-      type: string
-    ISO:
+    iso:
       type: string
 
-ContinentSummary:
-  type: object
-  required:
-    - "name"
-  properties:
-    name:
-      type: string
 
 Data:
   type: object
@@ -51,66 +22,55 @@ Data:
   properties:
     year:
       type: integer
-    generalData:
-      $ref: "#/GeneralData"
     emissionData:
       $ref: "#/EmissionData"
-    temperatureData:
-      $ref: "#/TemperatureData"
     energyData:
       $ref: "#/EnergyData"
-        
-DataSummary:
-  type: object
-  properties:
     generalData:
-      type: string
-    emissionData:
-      type: string
+      $ref: "#/GeneralData"
     temperatureData:
-      type: string
-    energyData:
-      type: string
+      $ref: "#/TemperatureData"
         
+
 GeneralData:
   type: object
   properties:
     population:
       type: integer
-    GDP:
+    gdp:
       type: number
-    ownerName:
-      type: string
+    year:
+      type: integer
 
 EmissionData:
   type: object
   properties:
-    CO2:
+    co2:
       type: number
-    CH4:
+    ch4:
       type: number
-    N20:
+    n20:
       type: number
-    total_ghg:
+    ghg:
       type: number
-    ownerName:
-      type: string
+    year:
+      type: integer
     
 TemperatureData:
   type: object
   properties:
-    shares_of_temp_change_from_ghg:
+    shares:
       type: number
-    temperature_change_CH4:
+    change_ch4:
       type: number
-    temperature_change_N20:
+    change_n20:
       type: number
-    temperature_change_CO2:
+    change_co2:
       type: number
-    temperature_change_ghg:
+    change_ghg:
       type: number
-    ownerName:
-      type: string
+    year:
+      type: integer
 
 EnergyData:
   type: object
@@ -119,22 +79,21 @@ EnergyData:
       type: number
     energy_per_ghg:
       type: number
-    ownerName:
-      type: string
+    year:
+      type: integer
 
 CountryFilterKeysAlpha:
-      type: string
-      enum:
-        - ISO
-        - name
+  type: string
+  enum:
+    - descending
 
-CountryFilterKeysNum:
-      type: int
-      enum:
-        - population
-        - shares_of_temp_change_from_ghg
+CountryFilterKeysIsoName:
+  type: string
+  enum:
+    - ISO
+    - name
 
 DataFilterKeys:
-      type: int
-      enum:
-        - year
+  type: int
+  enum:
+    - year

@@ -56,8 +56,6 @@ public class EnergyData implements Data {
             return mapper.readValue(json, this.getClass());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

@@ -7,7 +7,7 @@ info:
     and greenhouose gases emissions.
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:51417
     description: Spring Boot backend implementation.
 
 components:
@@ -18,33 +18,23 @@ components:
     $ref: "reponses.yaml"
 
   parameters:
-    order-by-alpha:
-      name: order-by-alpha
+    order:
+      name: order
       in: query
       required: false
-      description: The column to order the result data by alphabetically
+      description:  Whether the data is ascending or descending
       schema:
         $ref: "#/components/schemas/CountryFilterKeysAlpha"
 
 
-    order-by-num:
-      name: order-by-num
+    filter:
+      name: filter
       in: query
       required: false
       description: The column to order the result data by numbers
       schema:
-        $ref: "#/components/schemas/CountryFilterKeysNum"
+        $ref: "#/components/schemas/CountryFilterKeysIsoName"
 
-    order-dir:
-      name: order-dir
-      in: query
-      required: false
-      description: The directorion to order the indicated column
-      schema:
-        type: string
-        enum:
-          - desc
-          - asc
 
     limit:
       name: limit
@@ -63,24 +53,24 @@ components:
       schema:
         type: integer
         
-    lower-bound:
-      name: lower-bound
+    lower:
+      name: lower
       in: query
       required: false
-      description: The lower bound in years
+      description: The lower bound 
       schema:
         type: integer
 
-    upper-bound:
-      name: upper-bound
+    upper:
+      name: upper
       in: query
       required: false
-      description: The upper bound in years
+      description: The upper bound
       schema:
         type: integer
     
-    data-type:
-      name: data-type
+    dataType:
+      name: dataType
       in: query
       required: false
       description: The type of data to be displayed
@@ -97,8 +87,8 @@ paths:
       summary: Retrives a list of countries.
       description: Retrieves a list of countries (their name and ISO code).
       parameters:
-        - $ref: "#/components/parameters/order-by-alpha"
-        - $ref: "#/components/parameters/order-dir"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/filter"
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/offset"
       
@@ -110,13 +100,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/CountrySummary"
+                  $ref: "#/components/schemas/SummaryData"
             text/csv:
               schema:
-                $ref: "#components/schemas/CountrySummary"
+                $ref: "#components/schemas/SummaryData"
               example: |-
-                name,ISO
-                string,string 
+                name,data/0/year,data/0/emissionData/co2,data/0/emissionData/ch4,data/0/emissionData/n20,data/0/emissionData/ghg,data/0/emissionData/year,data/0/energyData/energy_per_cap,data/0/energyData/energy_per_ghg,data/0/energyData/year,data/0/generalData/population,data/0/generalData/gdp,data/0/generalData/year,data/0/temperatureData/shares,data/0/temperatureData/change_ch4,data/0/temperatureData/change_n20,data/0/temperatureData/change_co2,data/0/temperatureData/change_ghg,data/0/temperatureData/year,iso
+                string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,string
 
         '204':
           $ref: "#/components/responses/NoResults"
@@ -128,37 +118,38 @@ paths:
           $ref: '#/components/responses/ServerError'
 
   /countries/{ISO}:
-    parameters: 
-      - name: ISO
-        in: path
-        required: true
-        description: ISO of the country
-        schema:
-          type: string
-      - $ref: "#/components/parameters/limit"
-      - $ref: "#/components/parameters/offset"
-      - $ref: "#/components/parameters/order-dir"
-      - $ref: "#/components/parameters/lower-bound"
-      - $ref: "#/components/parameters/upper-bound"
-      - $ref: "#/components/parameters/data-type"
+
     get:
       tags:
         - Countries
       summary: Retrives the summary of a country.
       description: Retrieves the summary of a specific country and some data. The country is picked based on ISO code.
+      parameters: 
+        - name: ISO
+          in: path
+          required: true
+          description: ISO of the country
+          schema:
+            type: string
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/lower"
+        - $ref: "#/components/parameters/upper"
+        - $ref: "#/components/parameters/dataType"
       responses:
         "200":
           description: Successful retrieval
           content:
             application/json:
               schema:
-                $ref : "#components/schemas/Country"
+                $ref : "#components/schemas/SummaryData"
             text/csv:
               schema:
-                $ref: "#components/schemas/Country"
+                $ref: "#components/schemas/SummaryData"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 
         '204':
@@ -169,6 +160,39 @@ paths:
 
         '5XX':
           $ref: '#/components/responses/ServerError'
+
+    post:
+      tags:
+        - Countries
+      summary: Creates the data for a country in a specific year.
+      description: Creates the data for a country in a specific year, aditionally filtered by dataType.
+      parameters: 
+        - name: ISO
+          in: path
+          required: true
+          description: ISO of the country
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneralData"
+      responses:
+        '201':
+          description: Country data successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Data"
+                description: The year of the newly created data.
+            text/csv:
+              schema:
+                type: integer
+                example: |-
+                  year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
+                  0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
           
   /countries/{ISO}/{year}:
     parameters:
@@ -184,13 +208,14 @@ paths:
         description: Year of the data.
         schema:
           type: integer
-      - $ref: "#/components/parameters/data-type"
       
     get:
       tags:
         - Countries
-      summary: Retrives the date for a country in a specific year.
-      description: Retrives the data for a country in a specific year, aditionally filtered by dataType.
+      summary: Retrieves the date for a country in a specific year.
+      description: Retrieves the data for a country in a specific year, aditionally filtered by dataType.
+      parameters:
+        - $ref: "#/components/parameters/dataType"
       responses:
         '200':
           description: Successful retrieval
@@ -203,8 +228,10 @@ paths:
               schema:
                 $ref: "#components/schemas/Data"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -217,8 +244,10 @@ paths:
     put:
       tags:
         - Countries
-      summary: Updates the date for a country in a specific year.
+      summary: Updates the data for a country in a specific year.
       description: Updates the data for a country in a specific year, aditionally filtered by dataType.
+      parameters:
+        - $ref: "#/components/parameters/dataType"
       requestBody:
         required: true
         content:
@@ -229,8 +258,9 @@ paths:
             schema:
               $ref: "#/components/schemas/Data"
             example: |-
-              year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-              0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+              year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
       responses:
         '200':
           description: Country updated, returns the new state
@@ -242,9 +272,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Data"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
-
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -258,8 +287,8 @@ paths:
     delete:
       tags:
         - Countries
-      summary: Deletes the date for a country in a specific year.
-      description: Deletes the data for a country in a specific year, aditionally filtered by dataType.
+      summary: Deletes data for a country.
+      description: Deletes  data for a country in a specific year.
       
       responses:
         '204':
@@ -274,31 +303,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-    post:
-        tags:
-          - Countries
-        summary: Creates the date for a country in a specific year.
-        description: Creates the data for a country in a specific year, aditionally filtered by dataType.
-        requestBody:
-          required: true
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Data"
-        responses:
-          '201':
-            description: Country data successfully created
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/Data"
-                  description: The year of the newly created data.
-              text/csv:
-                schema:
-                  type: integer
-                  example: |-
-                    year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                    0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+  
 
   /countries/year{year}:
     parameters:
@@ -310,30 +315,30 @@ paths:
           type: integer
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
-      - $ref: "#/components/parameters/order-dir"
-      - $ref: "#/components/parameters/lower-bound"
-      - $ref: "#/components/parameters/upper-bound"
-      - $ref: "#/components/parameters/data-type"
+      - $ref: "#/components/parameters/order"
+      - $ref: "#/components/parameters/lower"
+      - $ref: "#/components/parameters/upper"
+      - $ref: "#/components/parameters/dataType"
     get:
       tags:
         - Countries
       summary: Retrieves all the data in a year.
-      description: Retrives all the data in a specific year, aditionally filtered by data-type.
+      description: Retrives all the data in a specific year, aditionally filtered by dataType.
       responses:
         '200':
           description: Successful retrieval
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Data"
-
+                type: array
+                items:
+                  $ref: "#/components/schemas/SummaryData"
             text/csv:
               schema:
-                $ref: "#components/schemas/Data"
+                $ref: "#components/schemas/SummaryData"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
-               
+                name,data/0/year,data/0/emissionData/co2,data/0/emissionData/ch4,data/0/emissionData/n20,data/0/emissionData/ghg,data/0/emissionData/year,data/0/energyData/energy_per_cap,data/0/energyData/energy_per_ghg,data/0/energyData/year,data/0/generalData/population,data/0/generalData/gdp,data/0/generalData/year,data/0/temperatureData/shares,data/0/temperatureData/change_ch4,data/0/temperatureData/change_n20,data/0/temperatureData/change_co2,data/0/temperatureData/change_ghg,data/0/temperatureData/year,iso
+                string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,string
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -351,7 +356,7 @@ paths:
       summary: Retrieves a list of continents
       description: Retrieves a list of continents with their name and data
       parameters:
-          - $ref: "#/components/parameters/order-dir"
+          - $ref: "#/components/parameters/order"
           - $ref: "#/components/parameters/limit"
           - $ref: "#/components/parameters/offset"
 
@@ -363,14 +368,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ContinentSummary"
+                  type: string
             text/csv:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ContinentSummary"
+                  type: string
               example: |-
-                name
+                Field1
                 string
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -397,25 +402,24 @@ paths:
               
           - $ref: "#/components/parameters/limit"
           - $ref: "#/components/parameters/offset"
-          - $ref: "#/components/parameters/order-dir"
-          - $ref: "#/components/parameters/lower-bound"
-          - $ref: "#/components/parameters/upper-bound"
-          - $ref: "#/components/parameters/data-type"
+          - $ref: "#/components/parameters/order"
+          - $ref: "#/components/parameters/lower"
+          - $ref: "#/components/parameters/upper"
+          - $ref: "#/components/parameters/dataType"
       responses:
         '200':
           description: Successful retrieval
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/Data"
+                  $ref: "#/components/schemas/SummaryData"
             text/csv:
               schema:
-                 $ref: "#/components/schemas/Data"
+                 $ref: "#/components/schemas/SummaryData"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
                 
-
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -425,7 +429,48 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /continents/{name}/year{year}:
+    post:
+      tags:
+        - Continents
+      summary: Creates Data for a continent.
+      description: Creates any kind of Data for a continent (based on name) in a specific year.
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Name of the continent.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: integer
+      responses:
+        '200':
+          description: Successfull creation, returns the new state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Data"
+            text/csv:
+              schema:
+                $ref: "#/components/schemas/Data"
+              example: |-
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /continents/{name}/{year}:
     parameters:
       - name: year
         in: path
@@ -439,12 +484,14 @@ paths:
         description: Name of the continent.
         schema:
           type: string
-      - $ref: "#/components/parameters/data-type"
+  
     get:
       tags:
         - Continents
       summary: "Retrieves a continent"
       description: "Retrieves a continent with specified name"
+      parameters:
+        - $ref: "#/components/parameters/dataType"
       responses:
         '200':
           description: Successful retrieval
@@ -456,9 +503,8 @@ paths:
               schema:
                  $ref: "#/components/schemas/Data"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
-                
+                year,emissionData/co2,emissionData/ch4,emissionData/n20,emissionData/ghg,emissionData/year,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/year,generalData/population,generalData/gdp,generalData/year,temperatureData/shares,temperatureData/change_ch4,temperatureData/change_n20,temperatureData/change_co2,temperatureData/change_ghg,temperatureData/year
+                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -474,6 +520,8 @@ paths:
         - Continents
       summary: Updates Data for a continent.
       description: Updates any kind of Data for a continent (based on name) in a specific year.
+      parameters:
+        - $ref: "#/components/parameters/dataType"
       requestBody:
         required: true
         content:
@@ -503,39 +551,6 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-    post:
-      tags:
-        - Continents
-      summary: Creates Data for a continent.
-      description: Creates any kind of Data for a continent (based on name) in a specific year.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Data"
-      responses:
-        '200':
-          description: Successfull creation, returns the new state
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Data"
-            text/csv:
-              schema:
-                $ref: "#/components/schemas/Data"
-              example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
-                
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
-        '404':
-          $ref: "#/components/responses/NotFound"
-
-        '5XX':
-          $ref: '#/components/responses/ServerError'
 
     delete:
       tags:
@@ -570,23 +585,25 @@ paths:
             type: integer
         - $ref: "#/components/parameters/limit"
         - $ref: "#/components/parameters/offset"
-        - $ref: "#/components/parameters/order-dir"
-        - $ref: "#/components/parameters/lower-bound"
-        - $ref: "#/components/parameters/upper-bound"
-        - $ref: "#/components/parameters/data-type"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/lower"
+        - $ref: "#/components/parameters/upper"
+        - $ref: "#/components/parameters/dataType"
       responses:
         '200':
           description: Successful retrieval
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/Data"
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/SummaryData"
             text/csv:
               schema:
-                 $ref: "#/components/schemas/Data"
+                 $ref: "#/components/schemas/SummaryData"
               example: |-
-                year,generalData/population,generalData/GDP,generalData/ownerName,emissionData/CO2,emissionData/CH4,emissionData/N20,emissionData/total_ghg,emissionData/ownerName,temperatureData/shares_of_temp_change_from_ghg,temperatureData/temperature_change_CH4,temperatureData/temperature_change_N20,temperatureData/temperature_change_CO2,temperatureData/temperature_change_ghg,temperatureData/ownerName,energyData/energy_per_cap,energyData/energy_per_ghg,energyData/ownerName
-                0,0,0,string,0,0,0,0,string,0,0,0,0,0,string,0,0,string
+                name,data/0/year,data/0/emissionData/co2,data/0/emissionData/ch4,data/0/emissionData/n20,data/0/emissionData/ghg,data/0/emissionData/year,data/0/energyData/energy_per_cap,data/0/energyData/energy_per_ghg,data/0/energyData/year,data/0/generalData/population,data/0/generalData/gdp,data/0/generalData/year,data/0/temperatureData/shares,data/0/temperatureData/change_ch4,data/0/temperatureData/change_n20,data/0/temperatureData/change_co2,data/0/temperatureData/change_ghg,data/0/temperatureData/year,iso
+                string,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,string
 
 
         '400':

@@ -70,13 +70,13 @@ public class CountriesController {
      * The method for the post request of the /countries/{ISO} path.
      *
      * @param ISO      the ISO of the country
-     * @param jsonYear the year in json format of the data to be created.
-     * @return success if succesful
+//     * @param jsonYear the year in json format of the data to be created.
+     * @return success if successful
      */
     @PostMapping("/countries/{ISO}")
     public String countryISOYearPost(@PathVariable String ISO,
-                                     @RequestBody String jsonYear) {
-        countriesService.createData(ISO, jsonYear);
+                                     @RequestBody String generalData) {
+        countriesService.createData(ISO, generalData);
         return "Success";
     }
 
@@ -95,6 +95,8 @@ public class CountriesController {
             return countriesService.JSONCountrySummaryByISOAndYear(ISO, year, dataType);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No country with given ISO and year", e);
+        } catch (WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         }
     }
 
