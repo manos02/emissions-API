@@ -4,8 +4,12 @@ package com.group25.webapp.controllers;
 import com.group25.webapp.errors.MyResourceNotFoundException;
 import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.service.ContinentsService;
+import com.group25.webapp.util.JsonToCsv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,18 +26,21 @@ public class ContinentsController {
     /**
      * The method for the get request of the /continents path.
      *
-     * @param order the order to order by
+     * @param order  the order to order by
      * @param limit  the limit of data returned
      * @param offset the offset of the data returned
      * @return The list of all continents after filtering.
      */
     @GetMapping("/continents")
-    public String continentGet(@RequestParam(required = false) Integer limit, @RequestParam(required = false) String order,
-                               @RequestParam(required = false) Integer offset) {
+    public ResponseEntity<String> continentGet(@RequestParam(required = false) Integer limit, @RequestParam(required = false) String order,
+                                               @RequestParam(required = false) Integer offset, @RequestHeader HttpHeaders headers) {
         try {
-            return continentsService.JSONContinentSummaries(order, limit, offset);
+            String data = continentsService.JSONContinentSummaries(order, limit, offset);
+            return csvOrJson(headers, data);
         } catch (WrongQueryException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -51,18 +58,22 @@ public class ContinentsController {
      * lower and upper.
      */
     @GetMapping("/continents/{name}")
-    public String continentISOGet(@PathVariable String name, @RequestParam(required = false) Integer dataType,
+    public ResponseEntity<String> continentISOGet(@PathVariable String name, @RequestParam(required = false) Integer dataType,
                                   @RequestParam(required = false) String order,
                                   @RequestParam(required = false) Integer limit,
                                   @RequestParam(required = false) Integer offset,
                                   @RequestParam(required = false) Integer lower,
-                                  @RequestParam(required = false) Integer upper) {
+                                  @RequestParam(required = false) Integer upper,
+                                  @RequestHeader HttpHeaders headers) {
         try {
-            return continentsService.JSONContinentSummaryByName(name, dataType, order, limit, offset, lower, upper);
+            String data = continentsService.JSONContinentSummaryByName(name, dataType, order, limit, offset, lower, upper);
+            return csvOrJson(headers, data);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No continent with given name", e);
         } catch (WrongQueryException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -83,19 +94,22 @@ public class ContinentsController {
     /**
      * The method for the get request of the /continents/{ISO}/{year} path.
      *
-     * @param name      the name of the continent
+     * @param name     the name of the continent
      * @param year     the year of the data
      * @param dataType the data type returned (full data by default)
      * @return the data entry of a specific continent (identified by name) and year
      */
     @GetMapping("/continents/{name}/{year}")
-    public String continentISOYearGet(@PathVariable String name, @PathVariable Integer year, @RequestParam(required = false) Integer dataType)  {
+    public ResponseEntity<String> continentISOYearGet(@PathVariable String name, @PathVariable Integer year, @RequestParam(required = false) Integer dataType, @RequestHeader HttpHeaders headers)  {
         try {
-            return continentsService.JSONContinentSummaryByNameAndYear(name, year, dataType);
+            String data = continentsService.JSONContinentSummaryByNameAndYear(name, year, dataType);
+            return csvOrJson(headers,data);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name and year", e);
         } catch (WrongQueryException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -150,19 +164,32 @@ public class ContinentsController {
      * offset, lower bounds and upper bounds.
      */
     @GetMapping("/continents/year{year}")
-    public String continentYearGet(@PathVariable Integer year, @RequestParam(required = false) Integer dataType,
-                                   @RequestParam(required = false) String order,
-                                   @RequestParam(required = false) Integer limit,
-                                   @RequestParam(required = false) Integer offset,
-                                   @RequestParam(required = false) Integer lower,
-                                   @RequestParam(required = false) Integer upper,
-                                   @RequestParam(required = false) String filter) {
+    public ResponseEntity<String> continentYearGet(@PathVariable Integer year, @RequestParam(required = false) Integer dataType,
+                                                   @RequestParam(required = false) String order,
+                                                   @RequestParam(required = false) Integer limit,
+                                                   @RequestParam(required = false) Integer offset,
+                                                   @RequestParam(required = false) Integer lower,
+                                                   @RequestParam(required = false) Integer upper,
+                                                   @RequestParam(required = false) String filter,
+                                                   @RequestHeader HttpHeaders headers) {
         try {
-            return continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper, filter);
+            String data = continentsService.JSONGetYearData(year, dataType, order, limit, offset, lower, upper, filter);
+            return csvOrJson(headers, data);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given year", e);
         } catch (WrongQueryException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public ResponseEntity<String> csvOrJson(HttpHeaders headers, String data) throws Exception {
+        if (headers.getAccept().contains(MediaType.valueOf("text/csv"))) {
+            JsonToCsv converter = new JsonToCsv();
+            data = converter.convert(data);
+            return ResponseEntity.ok().contentType(MediaType.valueOf("text/csv")).body(data);
+        } else {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data);
         }
     }
 }

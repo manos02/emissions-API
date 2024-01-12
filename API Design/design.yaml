@@ -212,7 +212,7 @@ paths:
     get:
       tags:
         - Countries
-      summary: Retrieves the date for a country in a specific year.
+      summary: Retrieves the data for a country in a specific year.
       description: Retrieves the data for a country in a specific year, aditionally filtered by dataType.
       parameters:
         - $ref: "#/components/parameters/dataType"
