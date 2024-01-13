@@ -85,7 +85,7 @@ public class CountriesController {
      * The method for the post request of the /countries/{ISO} path.
      *
      * @param ISO      the ISO of the country
-//     * @param jsonYear the year in json format of the data to be created.
+     * @param generalData to be created.
      * @return success if successful
      */
     @PostMapping("/countries/{ISO}")

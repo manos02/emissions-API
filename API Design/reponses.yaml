@@ -57,7 +57,7 @@ ServerError:
             type: string
             description: Error message detailing the problem with the request
 
-    text/csv:
-      example: |-
-        error-message
-        string
+text/csv:
+  example: |-
+    error-message
+    string
