@@ -29,7 +29,7 @@ function ContinentsYearYear() {
     <div>
     {continentsYY.map((item, index) => (
       <div key={index} className="country-card">
-        <h2 onClick={()=> goRouteISO(item.iso)}>Name: {item.name}</h2>
+        <h2 onClick={()=> goRouteISO(item.name)}>Name: {item.name}</h2>
 
         <div className="section">
           <h3>General Data:</h3>

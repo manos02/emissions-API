@@ -49,6 +49,15 @@ function CountriesYear() {
       }
     }
 
+    function deleteEntry(){
+      CountriesISOYService.deleteCountriesISOYear(params).then(response => {
+        console.log(`Deleted post`);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+
     componentDidMount();
 
     var isoString = params["iso"];
@@ -56,6 +65,7 @@ function CountriesYear() {
     return (
       <div>
 
+        <button onClick={deleteEntry}>Delete Entry</button>
 
       <form>
         <label>

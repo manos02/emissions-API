@@ -16,6 +16,7 @@ function CountriesISO(){
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const [yearForm, setYearForm] = useState(-1);
 
   const goRouteISOYear = (iso, year) => {
     navigate(`/countries/${iso}/${year}`);
@@ -35,6 +36,24 @@ function CountriesISO(){
 
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  function handleYear(event){
+    setYearForm(event.target.value);
+    console.log(`${event.target.value}`);
+  }
+
+  function handleYearPost(event){
+    handleYear(event);
+    event.preventDefault();
+    if(yearForm>=0){
+      const response = CountriesISOService.postCountriesISO(params, queryParams, yearForm);
+      
+      alert("tried");
+    setYearForm(-1);
+    } else {
+      alert("please enter valid year");
     }
   }
   
@@ -82,6 +101,14 @@ function CountriesISO(){
           <input type="text" name="upper" placeholder="Enter upper bound"></input>
         </label>
         <input type="submit" value="Submit" />
+      </form>
+
+      <form>
+        <label>
+          Year of new data:
+          <input type="text" placeholder="Enter year" onChange={handleYearPost}></input>
+        </label>
+        <input type="submit" value="Submit" onSubmit={handleYearPost}/>
       </form>
 
         {country.data.map((item, index) => (
