@@ -90,7 +90,7 @@ public class CountriesService {
 
         List<Data> dataList = specificData(ISO, dataType);
 
-        dataList = bounds(lower, upper);
+        dataList = bounds(dataList, lower, upper);
         dataList = basicFiltering(dataList, order, limit, offset);
         SummaryData summaryData = new SummaryData(ISO, country.getName(), dataList);
 
@@ -252,7 +252,9 @@ public class CountriesService {
      * @return the list
      */
     public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
+
         dataList.sort(Comparator.comparing(Data::getYear));
+
 
         if (lower != null) {
             dataList.removeIf((Data data) -> data.getYear() < lower);
