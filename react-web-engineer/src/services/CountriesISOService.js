@@ -9,17 +9,18 @@ class CountriesISOService {
     return axios.get(url);
   }
 
-  postCountriesISO(iso, year, filter){
+  postCountriesISO(iso, data){
     var isoString = iso["iso"]; 
-    const url = `http://localhost:51417/countries/${isoString}?${filter}`;
-    return axios.post(url, year)
+    const url = `http://localhost:51417/countries/${isoString}`;
+    return axios.post(url, 
+      data)
     .then((response) => {
-    //console.log(response.data.token);
-    return response.data.token;
+    console.log(response);
+    return response;
     })
     .catch((error) => {
-        console.log(error);
-    });;
+        console.log(error.response.data);
+    });
   }
 
 }

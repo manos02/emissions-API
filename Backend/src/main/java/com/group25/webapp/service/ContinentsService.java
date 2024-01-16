@@ -269,7 +269,7 @@ public class ContinentsService {
      * @return the list filtered by the parameters
      */
     public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
-        if (order != null) {
+        if (order != null &&!order.equals("ascending")) {
             if (!order.equals("descending")) {
                 throw new WrongQueryException();
             }

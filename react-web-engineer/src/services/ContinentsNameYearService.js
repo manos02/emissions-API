@@ -7,6 +7,14 @@ class ContinentsNameYear {
     const url = (`http://localhost:51417/continents/${nameString}/${yearString}?${filter}`);
     return axios.get(url);
   }
+
+  deleteContinentsNameYear(nameYear){
+    var nameString = nameYear["name"];
+    var yearString = nameYear["year"];
+    const url = (`http://localhost:51417/continents/${nameString}/${yearString}`);
+    return axios.delete(url);
+  }
+
 }
 
 export default new ContinentsNameYear();

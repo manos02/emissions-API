@@ -7,6 +7,9 @@ function CountriesYY() {
 
   const[countriesYY, setCountriesYY] = useState([]);
   const routeParams = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   const navigate = useNavigate();
 
   const goRouteISO = (iso) => {
@@ -15,7 +18,7 @@ function CountriesYY() {
 
   const componentDidMount= async() => {
     try {
-      const response = await CountriesISOYYService.getCountriesYY(routeParams);
+      const response = await CountriesISOYYService.getCountriesYY(routeParams, queryParams);
       setCountriesYY(response.data);
 
     } catch (error) {
@@ -27,6 +30,17 @@ function CountriesYY() {
 
     return (
       <div>
+        <form>
+        <label>
+          Filter by:
+          <select name="filter">
+            <option value="name">Name</option>
+            <option value="shareghg">Share of GHG</option>
+          </select>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+
         {countriesYY.map((item, index) => (
           <div key={index} className="country-card">
             <h2 onClick={()=> goRouteISO(item.iso)}>Name: {item.name}</h2>

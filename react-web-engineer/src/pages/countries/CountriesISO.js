@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { useParams, useLocation, useSearchParams} from 'react-router-dom';
 import CountriesISOService from "../../services/CountriesISOService";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import ".././Layout.css";
 
 function CountriesISO(){
@@ -16,8 +17,8 @@ function CountriesISO(){
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const [yearForm, setYearForm] = useState(-1);
-
+  const [formData, setFormData] = useState({population: null, gdp: null, year:null})
+  const [dataTypeForm, setDataTypeForm] = useState(4);
   const goRouteISOYear = (iso, year) => {
     navigate(`/countries/${iso}/${year}`);
   };
@@ -40,23 +41,154 @@ function CountriesISO(){
   }
 
   function handleYear(event){
-    setYearForm(event.target.value);
-    console.log(`${event.target.value}`);
+    setFormData({population: formData.population, gdp: formData.gdp, year:event.target.value});
+    console.log(formData);
+  }
+  function handlePopulation(event){
+    setFormData({population: event.target.value, gdp: formData.gdp, year:formData.year});
+  }
+  function handleGDP(event){
+    setFormData({population: formData.population, gdp: event.target.value, year:formData.year});
   }
 
-  function handleYearPost(event){
-    handleYear(event);
-    event.preventDefault();
-    if(yearForm>=0){
-      const response = CountriesISOService.postCountriesISO(params, queryParams, yearForm);
+  function handlePost(){
+    if(formData.year!==null&&formData.year!==undefined&&formData.year!==""){
+      const response = CountriesISOService.postCountriesISO(params, formData);
       
       alert("tried");
-    setYearForm(-1);
+      setFormData({population: null, gdp: null, year:null});
     } else {
       alert("please enter valid year");
     }
   }
-  
+
+  function handleGeneralData(item){
+    return (
+    <div className="ISO-data-items">
+              <h2>General Data:</h2>
+              <table border="1px solid">
+        <thead>
+          <tr>
+            <td>GDP</td>
+            <td>Population</td>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+            <td>{item.generalData.gdp}</td>
+            <td>{item.generalData.population}</td>
+              </tr>
+        </tbody>
+
+      </table>
+      </div>
+    )
+  }
+
+  function handleEmissionData(item){
+    return(<div className="ISO-data-items">
+    <h2>Emission Data:</h2>
+    
+    <table border="1px solid">
+<thead>
+  <tr>
+    <td>co2</td>
+    <td>ch4</td>
+    <td>n20</td>
+    <td>total ghg</td>
+  </tr>
+</thead>
+<tbody>
+      <tr>
+      <td>{item.emissionData.co2}</td>
+    <td>{item.emissionData.ch4}</td>
+    <td>{item.emissionData.n20}</td>
+    <td>{item.emissionData.ghg}</td>
+      </tr>
+</tbody>
+
+</table>
+</div>)
+  }
+
+  function handleEnergyData(item){
+    return(<div className="ISO-data-items">
+    <h2>Energy Data:</h2>
+    <table border="1px solid">
+<thead>
+  <tr>
+    <td>Energy_per_cap</td>
+    <td>Energy_per_ghg</td>
+  </tr>
+</thead>
+<tbody>
+      <tr>
+    <td>{item.energyData.energy_per_cap}</td>
+    <td>{item.energyData.energy_per_ghg}</td>
+      </tr>
+</tbody>
+
+</table>
+</div>)
+  }
+
+  function handleTemperatureData(item){
+    return (<div className="ISO-data-items">
+    <h2>Temperature Data:</h2>
+    <table border="1px solid">
+<thead>
+  <tr>
+    <td>change ghg</td>
+    <td>change co2</td>
+    <td>change ch4</td>
+    <td>change n20</td>
+    <td>shares</td>
+  </tr>
+</thead>
+<tbody>
+      <tr>
+      <td>{item.temperatureData.change_ghg}</td>
+    <td>{item.temperatureData.change_co2}</td>
+    <td>{item.temperatureData.change_ch4}</td>
+    <td>{item.temperatureData.change_n20}</td>
+    <td>{item.temperatureData.shares}</td>
+      </tr>
+</tbody>
+
+</table>
+</div>)
+  }
+
+  function handleOptions(item){
+
+    if(dataTypeForm==0){
+       return handleGeneralData(item)
+    } else
+    if(dataTypeForm==1){
+       return handleEmissionData(item)
+    } else
+    if(dataTypeForm==2){
+      return handleEnergyData(item)
+    } else
+    if(dataTypeForm==3){
+      return handleTemperatureData(item)
+    } else {
+      return (<div className="ISO-data">
+        
+      {handleGeneralData(item)}
+
+      {handleEmissionData(item)}
+
+      {handleEnergyData(item)}
+
+      {handleTemperatureData(item)}
+      </div>)
+    }
+  }
+
+  function handleDataTypeForm(event){
+    setDataTypeForm(event.target.value);
+  }
 
   componentDidMount();
 
@@ -69,12 +201,12 @@ function CountriesISO(){
         <form>
         <label>
           Datatype returned:
-          <select name="dataType">
+          <select onChange={handleDataTypeForm}>
             <option value="4">FullData</option>
-            <option value="1">Emission data</option>
-            <option value="2">Energy Data</option>
-            <option value="3">General Data</option>
-            <option value="0">Temperature Data</option>
+            <option value="0">General data</option>
+            <option value="1">Energy Data</option>
+            <option value="2">Emission Data</option>
+            <option value="3">Temperature Data</option>
           </select>
         </label>
         <label>
@@ -102,13 +234,23 @@ function CountriesISO(){
         </label>
         <input type="submit" value="Submit" />
       </form>
-
       <form>
         <label>
           Year of new data:
-          <input type="text" placeholder="Enter year" onChange={handleYearPost}></input>
+          <input type="text" placeholder="Enter year" onChange={handleYear} required={true}></input>
         </label>
-        <input type="submit" value="Submit" onSubmit={handleYearPost}/>
+        <label>
+          Population of new data:
+          <input type="text" placeholder="Enter population" onChange={handlePopulation}></input>
+        </label>
+        <label>
+          GDP of new data:
+          <input type="text" placeholder="Enter gdp" onChange={handleGDP}></input>
+        </label>
+        <select onChange={handlePost}>
+            <option>Not Submitting</option>
+            <option>Submitting</option>
+          </select>
       </form>
 
         {country.data.map((item, index) => (
@@ -118,89 +260,9 @@ function CountriesISO(){
 
               <div className="ISO-data">
             
-            <div className="ISO-data-items">
-              <h2>General Data:</h2>
-              <table border="1px solid">
-        <thead>
-          <tr>
-            <td>GDP</td>
-            <td>Population</td>
-          </tr>
-        </thead>
-        <tbody>
-              <tr>
-            <td>{item.generalData.gdp}</td>
-            <td>{item.generalData.population}</td>
-              </tr>
-        </tbody>
-
-      </table>
-      </div>
-      <div className="ISO-data-items">
-            <h2>Emission Data:</h2>
-            
-            <table border="1px solid">
-        <thead>
-          <tr>
-            <td>co2</td>
-            <td>ch4</td>
-            <td>n20</td>
-            <td>total ghg</td>
-          </tr>
-        </thead>
-        <tbody>
-              <tr>
-              <td>{item.emissionData.co2}</td>
-            <td>{item.emissionData.ch4}</td>
-            <td>{item.emissionData.n20}</td>
-            <td>{item.emissionData.ghg}</td>
-              </tr>
-        </tbody>
-
-      </table>
-      </div>
-      <div className="ISO-data-items">
-            <h2>Energy Data:</h2>
-            <table border="1px solid">
-        <thead>
-          <tr>
-            <td>Energy_per_cap</td>
-            <td>Energy_per_ghg</td>
-          </tr>
-        </thead>
-        <tbody>
-              <tr>
-            <td>{item.energyData.energy_per_cap}</td>
-            <td>{item.energyData.energy_per_ghg}</td>
-              </tr>
-        </tbody>
-
-      </table>
-</div>
-      <div className="ISO-data-items">
-            <h2>Temperature Data:</h2>
-            <table border="1px solid">
-        <thead>
-          <tr>
-            <td>change ghg</td>
-            <td>change co2</td>
-            <td>change ch4</td>
-            <td>change n20</td>
-            <td>shares</td>
-          </tr>
-        </thead>
-        <tbody>
-              <tr>
-              <td>{item.temperatureData.change_ghg}</td>
-            <td>{item.temperatureData.change_co2}</td>
-            <td>{item.temperatureData.change_ch4}</td>
-            <td>{item.temperatureData.change_n20}</td>
-            <td>{item.temperatureData.shares}</td>
-              </tr>
-        </tbody>
-
-      </table>
-      </div>
+            {handleOptions(item)}
+      
+      
       </div>
       <a>--------------</a>
           </div>

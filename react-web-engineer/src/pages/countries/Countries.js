@@ -25,11 +25,8 @@ function Countries() {
   };
 
   componentDidMount();
-
   
     return (
-
-      
       
     <div>
 
@@ -57,18 +54,6 @@ function Countries() {
         <label>
           Offset of items:
           <input type="text" name="offset" placeholder="Enter offset"></input>
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-
-      <form>
-        <label>
-          Enter a new country ISO:
-          <input type="text" placeholder="Enter ISO" required="true"></input>
-        </label>
-        <label>
-          Enter a new country name:
-          <input type="text" placeholder="Enter name" required="true"></input>
         </label>
         <input type="submit" value="Submit" />
       </form>
