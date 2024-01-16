@@ -91,7 +91,13 @@ public class CountriesController {
     @PostMapping("/countries/{ISO}")
     public String countryISOYearPost(@PathVariable String ISO,
                                      @RequestBody String generalData) {
-        countriesService.createData(ISO, generalData);
+        try {
+            countriesService.createData(ISO, generalData);
+        } catch(WrongQueryException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No country with given ISO", e);
+        }
         return "Success";
     }
 
@@ -187,6 +193,15 @@ public class CountriesController {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Processes input data and returns a response in either CSV or JSON format.
+     *
+     * @param headers The HTTP headers of the incoming request, used to determine the desired response format.
+     * @param data The input data in string format.
+     * @return ResponseEntity<String> An HTTP response entity containing the data in either CSV or JSON format with appropriate content type set.
+     * @throws Exception If any error occurs during the processing, conversion, or handling of the data.
+     */
     public ResponseEntity<String> csvOrJson(HttpHeaders headers, String data) throws Exception {
         if (headers.getAccept().contains(MediaType.valueOf("text/csv"))) {
             JsonToCsv converter = new JsonToCsv();

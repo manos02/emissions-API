@@ -87,7 +87,11 @@ public class ContinentsController {
     @PostMapping("/continents/{name}")
     public String continentISOYearPost(@PathVariable String name,
                                        @RequestBody String jsonYear) {
-        continentsService.createData(name, jsonYear);
+        try {
+            continentsService.createData(name, jsonYear);
+        } catch (MyResourceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No entry for given name", e);
+        }
         return "Success";
     }
 
@@ -183,6 +187,15 @@ public class ContinentsController {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Processes input data and returns a response in either CSV or JSON format.
+     *
+     * @param headers The HTTP headers of the incoming request, used to determine the desired response format.
+     * @param data The input data in string format.
+     * @return ResponseEntity<String> An HTTP response entity containing the data in either CSV or JSON format with appropriate content type set.
+     * @throws Exception If any error occurs during the processing, conversion, or handling of the data.
+     */
     public ResponseEntity<String> csvOrJson(HttpHeaders headers, String data) throws Exception {
         if (headers.getAccept().contains(MediaType.valueOf("text/csv"))) {
             JsonToCsv converter = new JsonToCsv();

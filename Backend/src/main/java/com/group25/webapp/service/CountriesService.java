@@ -60,6 +60,8 @@ public class CountriesService {
                 fullData.sort(Comparator.comparing(SummaryData::getISO));
             } else if (filter.equals("name")) {
                 fullData.sort(Comparator.comparing(SummaryData::getName));
+            } else {
+                throw new WrongQueryException();
             }
         }
 
@@ -182,11 +184,17 @@ public class CountriesService {
      * @param ISO the iso.
      * @param newGeneralData the data in Json format.
      */
-    public void createData(String ISO, String newGeneralData) {
+    public void createData(String ISO, String newGeneralData) throws MyResourceNotFoundException, WrongQueryException {
         CountryEntity countryEntity = new CountryEntity();
         countryEntity.setISO(ISO);
+        if (countryRepository.findFirstByISO(ISO) == null) {
+            throw new MyResourceNotFoundException();
+        }
         countryEntity.setName(countryRepository.findFirstByISO(ISO).getName());
         GeneralData newGData = JSON.fromJson(newGeneralData, GeneralData.class);
+        if (newGData.getYear() < 0) {
+            throw new WrongQueryException();
+        }
         countryEntity.setGeneralData(newGData);
         countryEntity.setYear(newGData.getYear());
         countryRepository.save(countryEntity);
@@ -204,7 +212,6 @@ public class CountriesService {
     public String updateData(String ISO, Integer year, Integer dataType, String updatedCountry) throws MyResourceNotFoundException {
 
         CountryEntity countryEntity = countryRepository.findFirstByISOAndYear(ISO, year);
-
         if (countryEntity == null) {
             throw new MyResourceNotFoundException();
         }
@@ -212,9 +219,7 @@ public class CountriesService {
         if (dataType == null) {
             dataType = 4;
         }
-
         Data data = null;
-
         switch (dataType) {
             case 0 -> {
                 data = JSON.fromJson(updatedCountry, GeneralData.class);
@@ -251,16 +256,21 @@ public class CountriesService {
      * @param upper    the upper limit
      * @return the list
      */
-    public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
+    public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) throws WrongQueryException {
 
         dataList.sort(Comparator.comparing(Data::getYear));
 
-
         if (lower != null) {
+            if (lower < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((Data data) -> data.getYear() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
+            if (upper < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((Data data) -> data.getYear() > upper);
         }
         Collections.reverse(dataList);
@@ -276,21 +286,29 @@ public class CountriesService {
      * @param upper    the upper limit
      * @return the list
      */
-    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
+    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) throws WrongQueryException {
 
         if (filter != null) {
             if (filter.equals("pop")) {
                 dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
             } else if (filter.equals("shareghg")) {
                 dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataShareGhg));
+            } else {
+                throw new WrongQueryException();
             }
         }
 
         if (lower != null) {
+            if (lower < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
+            if (upper < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() > upper);
         }
         Collections.reverse(dataList);
@@ -310,14 +328,14 @@ public class CountriesService {
      * @return the list filtered by the parameters
      */
     public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
-        if (order != null&&!order.equals("ascending")) {
+        if (order != null && !order.equals("ascending")) {
             if (!order.equals("descending")) {
                 throw new WrongQueryException();
             }
             Collections.reverse(dataList);
         }
         if (offset != null) {
-            if (offset > dataList.size()) {
+            if (offset > dataList.size() || offset < 0) {
                 throw new WrongQueryException();
             }
             dataList = ListManipulation.applyOffset(dataList, offset);

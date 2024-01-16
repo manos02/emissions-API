@@ -152,8 +152,11 @@ public class ContinentsService {
      * @param name     the name
      * @param jsonYear the year in json format
      */
-    public void createData(String name, String jsonYear) {
+    public void createData(String name, String jsonYear) throws MyResourceNotFoundException {
         ContinentEntity continentEntity = new ContinentEntity();
+        if (continentRepository.findByName(name) == null) {
+            throw new MyResourceNotFoundException();
+        }
         continentEntity.setName(name);
         continentEntity.setYear(JSON.fromJson(jsonYear, int.class));
         continentRepository.save(continentEntity);
@@ -204,7 +207,6 @@ public class ContinentsService {
         }
 
         continentRepository.save(continentEntity);
-
         return JSON.toJson(data);
     }
 
@@ -216,14 +218,20 @@ public class ContinentsService {
      * @param upper    the upper limit
      * @return the list
      */
-    public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
+    public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) throws WrongQueryException {
         dataList.sort(Comparator.comparing(Data::getYear));
 
         if (lower != null) {
+            if (lower < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((Data data) -> data.getYear() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
+            if (upper < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((Data data) -> data.getYear() > upper);
         }
         Collections.reverse(dataList);
@@ -240,16 +248,26 @@ public class ContinentsService {
      * @param filter filter to be sorted
      * @return the list
      */
-    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
-        if (filter != null && filter.equals("pop")) {
-            dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
+    public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) throws WrongQueryException {
+        if (filter != null) {
+            if (filter.equals("pop")) {
+                dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
+            } else {
+                throw new WrongQueryException();
+            }
         }
 
         if (lower != null) {
+            if (lower < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() < lower);
         }
         Collections.reverse(dataList);
         if (upper != null) {
+            if (upper < 0) {
+                throw new WrongQueryException();
+            }
             dataList.removeIf((SummaryData data) -> data.retrieveFullData().population() > upper);
         }
         Collections.reverse(dataList);
@@ -269,7 +287,7 @@ public class ContinentsService {
      * @return the list filtered by the parameters
      */
     public <T> List<T> basicFiltering(List<T> dataList, String order, Integer limit, Integer offset) throws WrongQueryException {
-        if (order != null &&!order.equals("ascending")) {
+        if (order != null && !order.equals("ascending")) {
             if (!order.equals("descending")) {
                 throw new WrongQueryException();
             }
@@ -313,21 +331,6 @@ public class ContinentsService {
         return dataList;
     }
 
-    /**
-     * The method gets all the full data of a year.
-     *
-     * @param year the year of the data
-     * @return the list of fulldata
-     */
-    public List<FullData> fullDataByYear(Integer year) {
-        List<FullData> dataList = new ArrayList<>();
-        List<ContinentEntity> continentEntities = continentRepository.findByYear(year);
-
-        for (var it : continentEntities) {
-            dataList.add(it.getFullData());
-        }
-        return dataList;
-    }
 
 }
 
