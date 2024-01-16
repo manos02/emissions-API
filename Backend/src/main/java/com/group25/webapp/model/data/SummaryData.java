@@ -39,5 +39,12 @@ public class SummaryData {
         return ((FullData)data.get(0)).population();
     }
 
+    public Double retrieveFullDataShareGhg() {
+        if (((FullData)data.get(0)).getTemperatureData().getShares() != null) {
+            return ((FullData)data.get(0)).getTemperatureData().getShares();
+        } else {
+            return -1.0;
+        }
+    }
 
 }

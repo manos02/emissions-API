@@ -92,6 +92,7 @@ CountryFilterKeysIsoName:
   enum:
     - ISO
     - name
+    - shareghg
 
 DataFilterKeys:
   type: int

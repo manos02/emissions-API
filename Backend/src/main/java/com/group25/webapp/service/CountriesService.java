@@ -58,8 +58,7 @@ public class CountriesService {
         if (filter != null) {
             if (filter.equals("ISO")) {
                 fullData.sort(Comparator.comparing(SummaryData::getISO));
-            }
-            if (filter.equals("name")) {
+            } else if (filter.equals("name")) {
                 fullData.sort(Comparator.comparing(SummaryData::getName));
             }
         }
@@ -253,7 +252,9 @@ public class CountriesService {
      * @return the list
      */
     public List<Data> bounds(List<Data> dataList, Integer lower, Integer upper) {
+
         dataList.sort(Comparator.comparing(Data::getYear));
+
 
         if (lower != null) {
             dataList.removeIf((Data data) -> data.getYear() < lower);
@@ -277,8 +278,12 @@ public class CountriesService {
      */
     public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) {
 
-        if (filter != null && filter.equals("pop")) {
-            dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
+        if (filter != null) {
+            if (filter.equals("pop")) {
+                dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
+            } else if (filter.equals("shareghg")) {
+                dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataShareGhg));
+            }
         }
 
         if (lower != null) {
