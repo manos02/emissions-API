@@ -300,7 +300,7 @@ public class ContinentsService {
             dataList = ListManipulation.applyOffset(dataList, offset);
         }
         if (limit != null) {
-            if (limit < 0) {
+            if (limit < 0 || limit > dataList.size()) {
                 throw new WrongQueryException();
             }
             dataList = ListManipulation.applyLimit(dataList, limit);

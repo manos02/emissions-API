@@ -82,7 +82,7 @@ public class ContinentsController {
      *
      * @param name      the name of the continent
      * @param jsonYear the year in json format of the data to be created.
-     * @return success if successful
+     * @return success if succesful
      */
     @PostMapping("/continents/{name}")
     public String continentISOYearPost(@PathVariable String name,
