@@ -20,7 +20,6 @@
   font-family: Verdana;
 }
 
-
 .Layout-button:hover {
   background-color: #04AA6D; /* Green */
   color: black;
@@ -54,10 +53,17 @@
   flex-direction: row;
 }
 
+.Layout-button:hover {
+  background-color: #ddd;
+}
+
+
 .ISO-data{
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .ISO-data-items{
@@ -74,3 +80,147 @@
   border: #282c34;
   border-style: dashed;
 }
+
+.year-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.year-table th, .year-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.year-table th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.year-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  background-color: #f2f2f2;
+  color: #000;
+}
+
+.Layout-button {
+  cursor: pointer;
+}
+
+.FORM {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  background-color: #4CAF50;
+  border-radius: 5px;
+  margin: 20px 0;
+  display: inline-block;
+}
+
+
+.ISO-data-items table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.ISO-data-items th, .ISO-data-items td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.ISO-data-items thead tr {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.ISO-data-items tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.ISO-data-items tbody tr:hover {
+  background-color: #ddd;
+}
+
+.ISO-data-items h2 {
+  color: #333;
+  padding: 10px 0;
+  font-size: 22px;
+}
+
+.data-cont {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-cont h2 {
+  color: #4CAF50;
+  margin-bottom: 10px;
+}
+
+
+.data-cont p {
+  font-size: 16px;
+  color: #333;
+  margin-left: 20px;
+}
+
+.error-container {
+  padding: 15px;
+  margin-top: 20px;
+  background-color: #ffcccc;
+  border: 1px solid #ff0000;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.error-message {
+  color: #ff0000;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.error-icon {
+  margin-right: 10px;
+}
+
+.home-container {
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(to right, #6dd5ed, #2193b0);
+  min-height: 100vh;
+}
+
+.home-title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.home-description {
+  font-size: 1.5rem;
+  max-width: 600px;
+  margin: auto;
+}
+
+.pagination .page-item {
+  display: inline;
+  margin-right: 10px;
+}
+
+
+
+
+
