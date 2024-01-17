@@ -1,5 +1,6 @@
 package com.group25.webapp.service;
 
+import com.group25.webapp.errors.MyResourceExistsException;
 import com.group25.webapp.errors.MyResourceNotFoundException;
 import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.model.data.*;
@@ -152,13 +153,17 @@ public class ContinentsService {
      * @param name     the name
      * @param jsonYear the year in json format
      */
-    public void createData(String name, String jsonYear) throws MyResourceNotFoundException {
+    public void createData(String name, String jsonYear) throws MyResourceNotFoundException, MyResourceExistsException {
         ContinentEntity continentEntity = new ContinentEntity();
         if (continentRepository.findByName(name) == null) {
             throw new MyResourceNotFoundException();
         }
+        int year = JSON.fromJson(jsonYear, int.class);
+        if (continentRepository.findFirstByNameAndYear(name, year) != null) {
+            throw new MyResourceExistsException();
+        }
         continentEntity.setName(name);
-        continentEntity.setYear(JSON.fromJson(jsonYear, int.class));
+        continentEntity.setYear(year);
         continentRepository.save(continentEntity);
     }
 

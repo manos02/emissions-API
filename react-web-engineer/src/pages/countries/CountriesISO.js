@@ -181,11 +181,8 @@ function CountriesISO(){
       return (<div className="ISO-data">
         
       {handleGeneralData(item)}
-
       {handleEmissionData(item)}
-
       {handleEnergyData(item)}
-
       {handleTemperatureData(item)}
       </div>)
     }
@@ -267,13 +264,9 @@ function CountriesISO(){
 
         {country.data.map((item, index) => (
           <div key={index} className="ISO">
-
               <a className = 'Layout-button' onClick={()=> goRouteISOYear(country.iso, item.year)}>Year: {item.year}</a>
-
               <div className="ISO-data">
-            
             {handleOptions(item)}
-      
       
       </div>
       <a>--------------</a>

@@ -17,11 +17,11 @@ function Countries() {
       setCountries(response.data)
     } catch (error) {
       console.error("Error fetching data:", error.message);
-      if(error.message==="Request failed with status code 404"){
+      if (error.message==="Request failed with status code 404") {
         alert(`${error.message}. No data to show :)`)
-      } else if (error.message==="Request failed with status code 400"){
+      } else if (error.message==="Request failed with status code 400") {
         alert(`${error.message}. Please enter proper query parameters :)`)
-      } else{
+      } else {
         alert(`${error.message}. Please fix before proceeding.`)
       }
     }

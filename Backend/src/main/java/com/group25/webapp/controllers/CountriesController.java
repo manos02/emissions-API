@@ -1,5 +1,6 @@
 package com.group25.webapp.controllers;
 
+import com.group25.webapp.errors.MyResourceExistsException;
 import com.group25.webapp.errors.MyResourceNotFoundException;
 import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.service.CountriesService;
@@ -97,6 +98,8 @@ public class CountriesController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong query parameter", e);
         } catch (MyResourceNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No country with given ISO", e);
+        } catch (MyResourceExistsException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This year already exists", e);
         }
         return "Success";
     }

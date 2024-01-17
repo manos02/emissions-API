@@ -1,5 +1,6 @@
 package com.group25.webapp.service;
 
+import com.group25.webapp.errors.MyResourceExistsException;
 import com.group25.webapp.errors.MyResourceNotFoundException;
 import com.group25.webapp.errors.WrongQueryException;
 import com.group25.webapp.model.data.*;
@@ -184,7 +185,7 @@ public class CountriesService {
      * @param ISO the iso.
      * @param newGeneralData the data in Json format.
      */
-    public void createData(String ISO, String newGeneralData) throws MyResourceNotFoundException, WrongQueryException {
+    public void createData(String ISO, String newGeneralData) throws MyResourceNotFoundException, WrongQueryException, MyResourceExistsException {
         CountryEntity countryEntity = new CountryEntity();
         countryEntity.setISO(ISO);
         if (countryRepository.findFirstByISO(ISO) == null) {
@@ -192,6 +193,11 @@ public class CountriesService {
         }
         countryEntity.setName(countryRepository.findFirstByISO(ISO).getName());
         GeneralData newGData = JSON.fromJson(newGeneralData, GeneralData.class);
+
+        if (countryRepository.findFirstByISOAndYear(ISO, newGData.getYear()) != null) {
+            throw new MyResourceExistsException();
+        }
+
         if (newGData.getYear() < 0) {
             throw new WrongQueryException();
         }
