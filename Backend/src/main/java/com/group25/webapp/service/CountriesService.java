@@ -341,7 +341,7 @@ public class CountriesService {
             dataList = ListManipulation.applyOffset(dataList, offset);
         }
         if (limit != null) {
-            if (limit < 0 || limit > dataList.size()) {
+            if (limit < 0) {
                 throw new WrongQueryException();
             }
             dataList = ListManipulation.applyLimit(dataList, limit);
