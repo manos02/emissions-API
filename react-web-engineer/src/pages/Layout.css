@@ -68,3 +68,9 @@
 .ISO-line{
   background-color: #04AA6D;
 }
+
+.FORM{
+  background-color: whitesmoke;
+  border: #282c34;
+  border-style: dashed;
+}

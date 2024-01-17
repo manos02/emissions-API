@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useLocation, useSearchParams } from 'react-router-dom';
 import CountriesService from "../../services/CountriesService";
 import { useNavigate } from "react-router-dom";
+import ".././Layout.css";
 
 function Countries() {
     const [countries, setCountries] = useState([]);
@@ -9,12 +10,21 @@ function Countries() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
   
-    const componentDidMount = () => {
+    const componentDidMount = async() => {
 
-    CountriesService.getCountries(queryParams).then((response) => {
-      console.log(response.data)
+    try {
+      const response = await CountriesService.getCountries(queryParams);
       setCountries(response.data)
-    })
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+      if(error.message==="Request failed with status code 404"){
+        alert(`${error.message}. No data to show :)`)
+      } else if (error.message==="Request failed with status code 400"){
+        alert(`${error.message}. Please enter proper query parameters :)`)
+      } else{
+        alert(`${error.message}. Please fix before proceeding.`)
+      }
+    }
   };
 
 
@@ -31,7 +41,8 @@ function Countries() {
     <div>
 
       <h1>Countries</h1>
-
+      <div className="FORM">
+        <h>FILTER THE DATA</h>
       <form>
         <label>
           Filter by:
@@ -57,6 +68,7 @@ function Countries() {
         </label>
         <input type="submit" value="Submit" />
       </form>
+      </div>
       
 
       <table border="1px solid">

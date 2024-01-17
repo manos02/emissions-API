@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import CountriesISOYService from "../../services/CountriesISOYService";
+import ".././Layout.css";
 
 function CountriesYear() {
     const[countryYear, setCountryYear] = useState({
@@ -55,8 +56,16 @@ function CountriesYear() {
           },
         );
       } catch (error) {
+
         console.error("Error fetching data:", error.message);
-        setHasError(1);
+        if(error.message==="Request failed with status code 404"){
+          setHasError(1);
+        } else if (error.message==="Request failed with status code 400"){
+          alert(`${error.message}. Please enter proper query parameters :)`)
+        } else{
+          alert(`${error.message}. Please fix before proceeding.`)
+        }
+        
       }
     }
 
@@ -71,13 +80,13 @@ function CountriesYear() {
 
     componentDidMount();
 
-    const[tempcountryYear, setTempCountryYear] = useState({
+    const[tempcountryYear, setTempCountryYear] = useState({isInit: false, data:{
       year: countryYear.year,
       generalData: countryYear.generalData,
       emissionData: countryYear.emissionData,
       energyData: countryYear.energyData,
       temperatureData: countryYear.temperatureData,
-    }); 
+    }}); 
 
     var isoString = params["iso"];
     var yearString = params["year"];
@@ -115,7 +124,7 @@ function CountriesYear() {
       {countryYear.energyData && (
         <>
           <p>Energy_per_cap: {countryYear.energyData.energy_per_cap}</p>
-          <p>Energy_per_ghg: {countryYear.emissionData.energy_per_ghg}</p>
+          <p>Energy_per_ghg: {countryYear.energyData.energy_per_ghg}</p>
         </>
       )}</div>)
     }
@@ -161,160 +170,319 @@ function CountriesYear() {
     }
 
     function handleGDP(event){
-      setTempCountryYear({
-        year: tempcountryYear.year,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: {
+            gdp: event.target.value,
+            population: countryYear.generalData.population,
+            year: countryYear.generalData.year
+          },
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
         generalData: {
           gdp: event.target.value,
-          population: tempcountryYear.generalData.population,
+          population: tempcountryYear.data.generalData.population,
+          year: tempcountryYear.data.generalData.year
         },
-        emissionData: tempcountryYear.emissionData,
-        energyData: tempcountryYear.energyData,
-        temperatureData: tempcountryYear.temperatureData,
-      })
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handlePopulation(event){
-      setCountryYear({
-        year: tempcountryYear.year,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: {
+            gdp: countryYear.generalData.gdp,
+            population:event.target.value, 
+            year: countryYear.generalData.year
+          },
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
         generalData: {
-          gdp: tempcountryYear.generalData.gdp,
-          population: event.target.value,
-          year: tempcountryYear.emissionData.year
+          gdp: tempcountryYear.data.generalData.gdp,
+          population:event.target.value, 
+          year: tempcountryYear.data.generalData.year
         },
-        emissionData: tempcountryYear.emissionData,
-        energyData: tempcountryYear.energyData,
-        temperatureData: tempcountryYear.temperatureData,
-      })
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleCO2(event){
-      setCountryYear({
-        year: tempcountryYear.year,
-        generalData: tempcountryYear.generalData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: {
+            co2: event.target.value,
+            ch4: countryYear.emissionData.ch4,
+            n20: countryYear.emissionData.n20,
+            ghg: countryYear.emissionData.ghg,
+            year: countryYear.emissionData.year
+          },
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
         emissionData: {
           co2: event.target.value,
-          ch4: tempcountryYear.emissionData.ch4,
-          n20: tempcountryYear.emissionData.n20,
-          ghg: tempcountryYear.emissionData.ghg,
-          year: tempcountryYear.emissionData.year
+          ch4: tempcountryYear.data.emissionData.ch4,
+          n20: tempcountryYear.data.emissionData.n20,
+          ghg: tempcountryYear.data.emissionData.ghg,
+          year: tempcountryYear.data.emissionData.year
         },
-        energyData: countryYear.energyData,
-        temperatureData: countryYear.temperatureData,
-      })
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleCH4(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: {
+            co2: countryYear.emissionData.co2,
+            ch4: event.target.value,
+            n20: countryYear.emissionData.n20,
+            ghg: countryYear.emissionData.ghg,
+            year: countryYear.emissionData.year
+          },
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
         emissionData: {
-          co2: countryYear.emissionData.co2,
+          co2: tempcountryYear.data.emissionData.co2,
           ch4: event.target.value,
-          n20: countryYear.emissionData.n20,
-          ghg: countryYear.emissionData.ghg,
-          year: countryYear.emissionData.year
+          n20: tempcountryYear.data.emissionData.n20,
+          ghg: tempcountryYear.data.emissionData.ghg,
+          year: tempcountryYear.data.emissionData.year
         },
-        energyData: countryYear.energyData,
-        temperatureData: countryYear.temperatureData,
-      })
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleN20(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: {
+            co2: countryYear.emissionData.co2,
+            ch4: countryYear.emissionData.ch4,
+            n20: event.target.value,
+            ghg: countryYear.emissionData.ghg,
+            year: countryYear.emissionData.year
+          },
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
         emissionData: {
-          co2: countryYear.emissionData.co2,
-          ch4: countryYear.emissionData.ch4,
+          co2: tempcountryYear.data.emissionData.co2,
+          ch4: tempcountryYear.data.emissionData.ch4,
           n20: event.target.value,
-          ghg: countryYear.emissionData.ghg,
-          year: countryYear.emissionData.year
+          ghg: tempcountryYear.data.emissionData.ghg,
+          year: tempcountryYear.data.emissionData.year
         },
-        energyData: countryYear.energyData,
-        temperatureData: countryYear.temperatureData,
-      })
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleGHG(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: {
+            co2: countryYear.emissionData.co2,
+            ch4: countryYear.emissionData.ch4,
+            n20: countryYear.emissionData.n20,
+            ghg: event.target.value,
+            year: countryYear.emissionData.year
+          },
+          energyData: countryYear.energyData,
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
         emissionData: {
-          co2: countryYear.emissionData.co2,
-          ch4: countryYear.emissionData.ch4,
-          n20: countryYear.emissionData.n20,
+          co2: tempcountryYear.data.emissionData.co2,
+          ch4: tempcountryYear.data.emissionData.ch4,
+          n20: tempcountryYear.data.emissionData.n20,
           ghg: event.target.value,
-          year: countryYear.emissionData.year
+          year: tempcountryYear.data.emissionData.year
         },
-        energyData: countryYear.energyData,
-        temperatureData: countryYear.temperatureData,
-      })
+        energyData: tempcountryYear.data.energyData,
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleEnergyPerCap(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: {
+            energy_per_cap: event.target.value,
+            energy_per_ghg: countryYear.energyData.energy_per_ghg,
+            year: countryYear.year
+          },
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
         energyData: {
           energy_per_cap: event.target.value,
-          energy_per_ghg: countryYear.energyData.energy_per_ghg,
-          year: countryYear.year
+          energy_per_ghg: tempcountryYear.data.energyData.energy_per_ghg,
+          year: tempcountryYear.data.year
         },
-        temperatureData: countryYear.temperatureData,
-      })
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
+    console.log(tempcountryYear.data.energyData.energy_per_ghg)
+    console.log(tempcountryYear.data.energyData)
+
     }
 
     function handleEnergyPerGHG(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: {
+            energy_per_cap: countryYear.energyData.energy_per_cap,
+            energy_per_ghg: event.target.value,
+            year: countryYear.year
+          },
+          temperatureData: countryYear.temperatureData,
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
         energyData: {
-          energy_per_cap: countryYear.energyData.energy_per_cap,
+          energy_per_cap: tempcountryYear.data.energyData.energy_per_cap,
           energy_per_ghg: event.target.value,
-          year: countryYear.year
+          year: tempcountryYear.data.year
         },
-        temperatureData: countryYear.temperatureData,
-      })
+        temperatureData: tempcountryYear.data.temperatureData,
+      }})
+    }
     }
 
     function handleChangeGHG(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
-        energyData: countryYear.energyData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: {
+            change_ghg: event.target.value,
+            change_co2: countryYear.temperatureData.change_co2,
+            change_ch4: countryYear.temperatureData.change_ch4,
+            change_n20: countryYear.temperatureData.change_n20,
+            shares: countryYear.temperatureData.shares,
+            year: countryYear.year
+          },
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
         temperatureData: {
           change_ghg: event.target.value,
-          change_co2: countryYear.temperatureData.change_co2,
-          change_ch4: countryYear.temperatureData.change_ch4,
-          change_n20: countryYear.temperatureData.change_n20,
-          shares: countryYear.temperatureData.shares,
-          year: countryYear.year
+          change_co2: tempcountryYear.data.temperatureData.change_co2,
+          change_ch4: tempcountryYear.data.temperatureData.change_ch4,
+          change_n20: tempcountryYear.data.temperatureData.change_n20,
+          shares: tempcountryYear.data.temperatureData.shares,
+          year: tempcountryYear.data.year
         },
-      })
+      }})
+    }
     }
 
     function handleChangeCO2(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
-        energyData: countryYear.energyData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: {
+            change_ghg: countryYear.temperatureData.change_ghg,
+            change_co2: event.target.value, 
+            change_ch4: countryYear.temperatureData.change_ch4,
+            change_n20: countryYear.temperatureData.change_n20,
+            shares: countryYear.temperatureData.shares,
+            year: countryYear.year
+          },
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
         temperatureData: {
-          change_ghg: countryYear.temperatureData.change_ghg,
-          change_co2: event.target.value,
-          change_ch4: countryYear.temperatureData.change_ch4,
-          change_n20: countryYear.temperatureData.change_n20,
-          shares: countryYear.temperatureData.shares,
-          year: countryYear.year
+          change_ghg: tempcountryYear.data.temperatureData.change_ghg,
+          change_co2: event.target.value, 
+          change_ch4: tempcountryYear.data.temperatureData.change_ch4,
+          change_n20: tempcountryYear.data.temperatureData.change_n20,
+          shares: tempcountryYear.data.temperatureData.shares,
+          year: tempcountryYear.data.year
         },
-      })
+      }})
+    }
     }
 
     function handleChangeCH4(event){
-      setCountryYear({
+      if(!tempcountryYear.isInit){
+      setTempCountryYear({isInit: true, data: {
         year: countryYear.year,
         generalData: countryYear.generalData,
         emissionData: countryYear.emissionData,
@@ -327,46 +495,99 @@ function CountriesYear() {
           shares: countryYear.temperatureData.shares,
           year: countryYear.year
         },
-      })
+      }})
+    } else{
+    setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+      year: tempcountryYear.data.year,
+      generalData: tempcountryYear.data.generalData,
+      emissionData: tempcountryYear.data.emissionData,
+      energyData: tempcountryYear.data.energyData,
+      temperatureData: {
+        change_ghg: tempcountryYear.data.temperatureData.change_ghg,
+        change_co2: tempcountryYear.data.temperatureData.change_co2,
+        change_ch4: event.target.value,
+        change_n20: tempcountryYear.data.temperatureData.change_n20,
+        shares: tempcountryYear.data.temperatureData.shares,
+        year: tempcountryYear.data.year
+      },
+    }})
+  }
     }
 
     function handleChangeN20(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
-        energyData: countryYear.energyData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: {
+            change_ghg: countryYear.temperatureData.change_ghg,
+            change_co2: countryYear.temperatureData.change_co2,
+            change_ch4: countryYear.temperatureData.change_ch4,
+            change_n20: event.target.value,
+            shares: countryYear.temperatureData.shares,
+            year: countryYear.year
+          },
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
         temperatureData: {
-          change_ghg: countryYear.temperatureData.change_ghg,
-          change_co2: countryYear.temperatureData.change_co2,
-          change_ch4: countryYear.temperatureData.change_ch4,
+          change_ghg: tempcountryYear.data.temperatureData.change_ghg,
+          change_co2: tempcountryYear.data.temperatureData.change_co2,
+          change_ch4: tempcountryYear.data.temperatureData.change_ch4,
           change_n20: event.target.value,
-          shares: countryYear.temperatureData.shares,
-          year: countryYear.year
+          shares: tempcountryYear.data.temperatureData.shares,
+          year: tempcountryYear.data.year
         },
-      })
+      }})
+    }
     }
 
     function handleShares(event){
-      setCountryYear({
-        year: countryYear.year,
-        generalData: countryYear.generalData,
-        emissionData: countryYear.emissionData,
-        energyData: countryYear.energyData,
+      if(!tempcountryYear.isInit){
+        setTempCountryYear({isInit: true, data: {
+          year: countryYear.year,
+          generalData: countryYear.generalData,
+          emissionData: countryYear.emissionData,
+          energyData: countryYear.energyData,
+          temperatureData: {
+            change_ghg: countryYear.temperatureData.change_ghg,
+            change_co2: countryYear.temperatureData.change_co2,
+            change_ch4: countryYear.temperatureData.change_ch4,
+            change_n20: countryYear.temperatureData.change_n20,
+            shares: event.target.value,
+            year: countryYear.year
+          },
+        }})
+      } else{
+      setTempCountryYear({isInit: tempcountryYear.isInit, data:{
+        year: tempcountryYear.data.year,
+        generalData: tempcountryYear.data.generalData,
+        emissionData: tempcountryYear.data.emissionData,
+        energyData: tempcountryYear.data.energyData,
         temperatureData: {
-          change_ghg: countryYear.temperatureData.change_ghg,
-          change_co2: countryYear.temperatureData.change_co2,
-          change_ch4: countryYear.temperatureData.change_ch4,
-          change_n20: countryYear.temperatureData.change_n20,
+          change_ghg: tempcountryYear.data.temperatureData.change_ghg,
+          change_co2: tempcountryYear.data.temperatureData.change_co2,
+          change_ch4: tempcountryYear.data.temperatureData.change_ch4,
+          change_n20: tempcountryYear.data.temperatureData.change_n20,
           shares: event.target.value,
-          year: countryYear.year
+          year: tempcountryYear.data.year
         },
-      })
+      }})
+    }
     }
 
     function handlePut(){
-      alert("tried");
-      CountriesISOYService.putCountriesISOYear(params, tempcountryYear);
+      if(!tempcountryYear.isInit){
+        alert("Please enter data before submitting")
+      } else{
+        CountriesISOYService.putCountriesISOYear(params, tempcountryYear.data);
+      }
     }
 
 
@@ -374,9 +595,11 @@ function CountriesYear() {
     function handleData(){
     return (
       <div>
+        <h2>{isoString}</h2>
+        {countryYear.year && <h2>Year: {countryYear.year}</h2>}
 
-        <button onClick={deleteEntry}>Delete Entry</button>
-
+        <div className="FORM">
+          <h>Choose what information you want to see. </h>
       <form>
         <label>
           Datatype returned:
@@ -390,12 +613,16 @@ function CountriesYear() {
         </label>
         <input type="submit" value="Submit"/>
       </form>
+      </div>
+
+      <div className="FORM">
+      <h>MODIFY DATA</h>
 
 
         <form>
         <label>
           Population of modified data:
-          <input type="text" placeholder="Enter population" onChange={handlePopulation} value={countryYear.generalData.population}></input>
+          <input type="text" placeholder="Enter population" onChange={handlePopulation}></input>
         </label>
         <label>
           GDP of modified data:
@@ -450,10 +677,10 @@ function CountriesYear() {
             <option>Submitting</option>
           </select>
       </form>
+      </div>
 
+      <button className="Layout-button" onClick={deleteEntry}>Delete Entry</button>
 
-        <h2>{isoString}</h2>
-        {countryYear.year && <h2>Year: {countryYear.year}</h2>}
         {handleDataTypes()}
       </div>
     );

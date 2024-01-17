@@ -293,7 +293,7 @@ public class CountriesService {
                 dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
             } else if (filter.equals("shareghg")) {
                 dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataShareGhg));
-            } else {
+            } else if (!filter.equals("name")){
                 throw new WrongQueryException();
             }
         }

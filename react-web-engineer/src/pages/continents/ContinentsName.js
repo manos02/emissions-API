@@ -33,7 +33,14 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
       );
 
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching data:", error.message);
+      if(error.message==="Request failed with status code 404"){
+        alert(`${error.message}. Please go to a proper continent name :)`)
+      } else if (error.message==="Request failed with status code 400"){
+        alert(`${error.message}. Please enter proper query parameters :)`)
+      } else{
+        alert(`${error.message}. Please fix before proceeding.`)
+      }
     }
   }
 
@@ -75,7 +82,7 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
   }
 
   function handlePost(event){
-    if(year!==null&&year!==undefined&&year!==""){
+    if(year!==null&&year!==undefined&&year!==""&&year>=0){
       const response = ContinentsNameService.postContinentsName(params, year);
       
       setYear(null);
@@ -185,6 +192,9 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
 
   return (
     <div>
+      <h1>{continent.name}</h1>
+      <div className="FORM">
+        <h>FILTER THE DATA</h>
       <form>
         <label>
           Datatype returned:
@@ -221,7 +231,10 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
         </label>
         <input type="submit" value="Submit" />
       </form>
+      </div>
 
+      <div className="FORM">
+      <h>CREATE NEW DATA ENTRY</h>
       <form>
         <label>
           Year of new data:
@@ -232,8 +245,9 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
             <option>Submitting</option>
           </select>
       </form>
+      </div>
       
-      <h1>{continent.name}</h1>
+      
   {continent.data.map((item, index) => (
     <div key={index} className="ISO">
 

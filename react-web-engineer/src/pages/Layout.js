@@ -10,17 +10,17 @@ import "./Layout.css";
 
 const Layout = () => {
 
-  const [formData, setFormData]= useState({dataType: "countries", year: -1})
+  const [formData, setFormData]= useState({dataType: "countries", year: ""})
   const navigate = useNavigate();
 
   function formSubmit(event){
-    if(formData.year<0){
+    if(formData.year===""){
       navigate(`/${formData.dataType}`);
     } else{
       navigate(`/${formData.dataType}/year/${formData.year}`);
     }
     
-    setFormData({dataType: "countries", year:-1})
+    setFormData({dataType: "countries", year:""})
   }
 
   function handleDataType(event){

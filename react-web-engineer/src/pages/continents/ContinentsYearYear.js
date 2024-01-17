@@ -2,11 +2,15 @@ import ContinentsNameYYService from "../../services/ContinentsNameYYService";
 import React, {useState} from "react";
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import ".././Layout.css";
 
 function ContinentsYearYear() {
   const[continentsYY, setContinentsYY] = useState([]);
   const routeParams = useParams();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  
 
   const goRouteISO = (iso) => {
     navigate(`/continents/${iso}`);
@@ -14,12 +18,20 @@ function ContinentsYearYear() {
 
   const componentDidMount= async() => {
     try {
-      const response = await ContinentsNameYYService.getContinentNameYY(routeParams);
+      const response = await ContinentsNameYYService.getContinentNameYY(routeParams, queryParams);
       setContinentsYY(response.data);
 
     } catch (error) {
       console.error("Error fetching data:", error.message);
+      if(error.message==="Request failed with status code 404"){
+        alert(`${error.message}. Please enter a proper year with at least one data entry :)`)
+      } else if (error.message==="Request failed with status code 400"){
+        alert(`${error.message}. Please enter proper query parameters :)`)
+      } else{
+        alert(`${error.message}. Please fix before proceeding.`)
+      }
     }
+
   }
 
   componentDidMount();
@@ -27,6 +39,45 @@ function ContinentsYearYear() {
 
   return (
     <div>
+      <h2>All Continents for year: {routeParams["year"]}</h2>
+
+      <div className="FORM">
+        <h>FILTER THE DATA</h>
+      <form>
+        <label>
+          Filter by:
+          <select name="filter">
+            <option value="name">Name</option>
+            <option value="pop">Population</option>
+          </select>
+        </label>
+        <label>
+          Order:
+          <select name="order">
+            <option value="ascending">Ascending</option>
+            <option value="descending">Descending</option>
+          </select>
+        </label>
+        <label>
+          Limit of items returned:
+          <input type="text" name="limit" placeholder="Enter limit"></input>
+        </label>
+        <label>
+          Offset of items:
+          <input type="text" name="offset" placeholder="Enter offset"></input>
+        </label>
+        <label>
+          Lower bound year:
+          <input type="text" name="lower" placeholder="Enter lower bound"></input>
+        </label>
+        <label>
+          Upper bound year:
+          <input type="text" name="upper" placeholder="Enter upper bound"></input>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+      </div>
+
     {continentsYY.map((item, index) => (
       <div key={index} className="country-card">
         <h2 onClick={()=> goRouteISO(item.name)}>Name: {item.name}</h2>

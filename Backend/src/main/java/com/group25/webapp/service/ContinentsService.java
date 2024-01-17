@@ -249,7 +249,7 @@ public class ContinentsService {
      * @return the list
      */
     public List<SummaryData> boundsPop(List<SummaryData> dataList, Integer lower, Integer upper, String filter) throws WrongQueryException {
-        if (filter != null) {
+        if (filter != null && !filter.equals("name")) {
             if (filter.equals("pop")) {
                 dataList.sort(Comparator.comparing(SummaryData::retrieveFullDataPopulation));
             } else {

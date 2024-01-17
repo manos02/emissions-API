@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import { useParams, useLocation, useSearchParams} from 'react-router-dom';
 import CountriesISOService from "../../services/CountriesISOService";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 import ".././Layout.css";
 
 function CountriesISO(){
@@ -36,7 +35,14 @@ function CountriesISO(){
       );
 
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching data:", error.message);
+      if(error.message==="Request failed with status code 404"){
+        alert(`${error.message}. Please go to a proper country ISO :)`)
+      } else if (error.message==="Request failed with status code 400"){
+        alert(`${error.message}. Please enter proper query parameters :)`)
+      } else{
+        alert(`${error.message}. Please fix before proceeding.`)
+      }
     }
   }
 
@@ -52,10 +58,9 @@ function CountriesISO(){
   }
 
   function handlePost(){
-    if(formData.year!==null&&formData.year!==undefined&&formData.year!==""){
+    if(formData.year!==null&&formData.year!==undefined&&formData.year!==""&&formData.year>=0){
       const response = CountriesISOService.postCountriesISO(params, formData);
       
-      alert("tried");
       setFormData({population: null, gdp: null, year:null});
     } else {
       alert("please enter valid year");
@@ -198,14 +203,16 @@ function CountriesISO(){
         <h1>{country.iso}</h1>
         <h1>{country.name}</h1>
 
+        <div className="FORM">
+          <h>FILTER THE DATA</h>
         <form>
         <label>
           Datatype returned:
           <select onChange={handleDataTypeForm}>
             <option value="4">FullData</option>
             <option value="0">General data</option>
-            <option value="1">Energy Data</option>
-            <option value="2">Emission Data</option>
+            <option value="1">Emission Data</option>
+            <option value="2">Energy Data</option>
             <option value="3">Temperature Data</option>
           </select>
         </label>
@@ -234,6 +241,10 @@ function CountriesISO(){
         </label>
         <input type="submit" value="Submit" />
       </form>
+      </div>
+
+      <div className="FORM">
+        <h>CREATE NEW DATA ENTRY</h>
       <form>
         <label>
           Year of new data:
@@ -252,6 +263,7 @@ function CountriesISO(){
             <option>Submitting</option>
           </select>
       </form>
+      </div>
 
         {country.data.map((item, index) => (
           <div key={index} className="ISO">

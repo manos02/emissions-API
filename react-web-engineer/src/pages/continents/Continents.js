@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import ContinentsService from "../../services/ContinentsService";
 import { useLocation, useNavigate } from "react-router-dom";
+import ".././Layout.css";
 
 function Continents() {
       const [continents, setContinents] = useState([]);
@@ -14,10 +15,20 @@ function Continents() {
 
   
 
-  const componentDidMount= ()=>{
-    ContinentsService.getContinents(queryParams).then((response) => {
+  const componentDidMount= async()=>{
+    try {
+      const response = await ContinentsService.getContinents(queryParams);
       setContinents(response.data)
-    })
+    } catch (error) {
+      console.error("Error fetching data:", error.message);
+      if(error.message==="Request failed with status code 404"){
+        alert(`${error.message}. No data to show`)
+      } else if (error.message==="Request failed with status code 400"){
+        alert(`${error.message}. Please enter proper query parameters :)`)
+      } else{
+        alert(`${error.message}. Please fix before proceeding.`)
+      }
+    }
   }
 
 
@@ -28,6 +39,8 @@ function Continents() {
       <div>
         <h1>Continents</h1>
         
+        <div className="FORM">
+          <h>FILTER THE DATA</h>
         <form>
         <label>
           Order:
@@ -46,6 +59,7 @@ function Continents() {
         </label>
         <input type="submit" value="Submit" />
       </form>
+      </div>
 
       </div>
       <table border="1px solid">
