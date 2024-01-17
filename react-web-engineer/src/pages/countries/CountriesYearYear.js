@@ -54,40 +54,85 @@ function CountriesYY() {
   }
 
   function handleGeneralData(item){
-    return(<div className="section">
-    <h3>General Data:</h3>
-    <p>GDP: {item.data[0].generalData.gdp}</p>
-    <p>Population: {item.data[0].generalData.population}</p>
-  </div>)
+    return(
+    <div>
+      <table className="year-table" style={{ marginTop: "20px" }}>
+        <thead>
+          <tr>
+            <th>GDP</th>
+            <th>Population</th>
+          </tr>
+        </thead>
+        <tbody>
+            <td>{item.data[0].generalData.gdp}</td>
+            <td>{item.data[0].generalData.population}</td>
+        </tbody>
+      </table>
+    </div>)
   }
 
   function handleEmissionData(item){
-    return(<div className="section">
-    <h3>Emission Data:</h3>
-    <p>CO2: {item.data[0].emissionData.co2}</p>
-    <p>CH4: {item.data[0].emissionData.ch4}</p>
-    <p>N20: {item.data[0].emissionData.n20}</p>
-    <p>Total ghg: {item.data[0].emissionData.ghg}</p>
-  </div>)
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>CO2 Emissions</th>
+              <th>CO4 Emissions</th>
+              <th>N20 Emissions</th>
+              <th>GHG Emissions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].emissionData.co2}</td>
+            <td>{item.data[0].emissionData.ch4}</td>
+            <td>{item.data[0].emissionData.n20}</td>
+            <td>{item.data[0].emissionData.ghg}</td>
+          </tbody>
+        </table>
+      </div>)
   }
 
   function handleEnergyData(item){
-    return(<div className="section">
-    <h3>Energy Data:</h3>
-    <p>Energy_per_cap: {item.data[0].energyData.energy_per_cap}</p>
-    <p>Energy_per_ghg: {item.data[0].energyData.energy_per_ghg}</p>
-  </div>)
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>Energy per capita</th>
+              <th>Energy per GHG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].energyData.energy_per_cap}</td>
+            <td>{item.data[0].energyData.energy_per_ghg}</td>
+          </tbody>
+        </table>
+      </div>)
   }
 
   function handleTemperatureData(item){
-    return(<div className="section">
-    <h3>Temperature Data:</h3>
-    <p>Change ghg: {item.data[0].temperatureData.change_ghg}</p>
-    <p>Change co2: {item.data[0].temperatureData.change_co2}</p>
-    <p>Change ch4: {item.data[0].temperatureData.change_ch4}</p>
-    <p>Change n20: {item.data[0].temperatureData.change_n20}</p>
-    <p>Shares: {item.data[0].temperatureData.shares}</p>
-  </div>)
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>Change GHG</th>
+              <th>Change CO2</th>
+              <th>Change CO4</th>
+              <th>Change N20</th>
+              <th>Share GHG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].temperatureData.change_ghg}</td>
+            <td>{item.data[0].temperatureData.change_co2}</td>
+            <td>{item.data[0].temperatureData.change_ch4}</td>
+            <td>{item.data[0].temperatureData.change_n20}</td>
+            <td>{item.data[0].temperatureData.shares}</td>
+          </tbody>
+        </table>
+      </div>)
   }
 
   function handleOptions(item){
@@ -126,7 +171,7 @@ function CountriesYY() {
           <a style={{ fontWeight: "bold" }}>FILTER THE DATA</a>
         </thead>
         <form>
-          <label>
+        <label>
           Datatype returned:
           <select onChange={handleDataTypeForm}>
             <option value="4">FullData</option>
@@ -183,19 +228,7 @@ function CountriesYY() {
           <tr>
             <th>Name</th>
             <th>ISO</th>
-            <th>GDP</th>
-            <th>Population</th>
-            <th>CO2 Emissions</th>
-            <th>CO4 Emissions</th>
-            <th>N20 Emissions</th>
-            <th>GHG Emissions</th>
-            <th>Energy per capita</th>
-            <th>Energy per GHG</th>
-            <th>Change GHG</th>
-            <th>Change CO2</th>
-            <th>Change CO4</th>
-            <th>Change N20</th>
-            <th>Share GHG</th>
+            <th>Data</th>
           </tr>
         </thead>
         <tbody>
@@ -203,19 +236,7 @@ function CountriesYY() {
             <tr key={index}>
               <td onClick={() => goRouteISO(item.iso)}>{item.name}</td>
               <td onClick={() => goRouteISO(item.iso)}>{item.iso}</td>
-              <td>{item.data[0].generalData.gdp}</td>
-              <td>{item.data[0].generalData.population}</td>
-              <td>{item.data[0].emissionData.co2}</td>
-              <td>{item.data[0].emissionData.ch4}</td>
-              <td>{item.data[0].emissionData.n20}</td>
-              <td>{item.data[0].emissionData.ghg}</td>
-              <td>{item.data[0].energyData.energy_per_cap}</td>
-              <td>{item.data[0].energyData.energy_per_ghg}</td>
-              <td>{item.data[0].temperatureData.change_ghg}</td>
-              <td>{item.data[0].temperatureData.change_co2}</td>
-              <td>{item.data[0].temperatureData.change_ch4}</td>
-              <td>{item.data[0].temperatureData.change_n20}</td>
-              <td>{item.data[0].temperatureData.shares}</td>
+              {handleOptions(item)}
             </tr>
           ))}
         </tbody>

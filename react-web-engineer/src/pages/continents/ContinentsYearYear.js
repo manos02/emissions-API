@@ -11,6 +11,7 @@ function ContinentsYearYear() {
   const routeParams = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const [dataTypeForm, setDataTypeForm] = useState(4);
   const navigate = useNavigate();
 
   const goRouteName = (name) => {
@@ -52,12 +53,134 @@ function ContinentsYearYear() {
     pageNumbers.push(i);
   }
 
+
+  function handleGeneralData(item){
+    return(
+    <div>
+      <table className="year-table" style={{ marginTop: "20px" }}>
+        <thead>
+          <tr>
+            <th>GDP</th>
+            <th>Population</th>
+          </tr>
+        </thead>
+        <tbody>
+            <td>{item.data[0].generalData.gdp}</td>
+            <td>{item.data[0].generalData.population}</td>
+        </tbody>
+      </table>
+    </div>)
+  }
+
+  function handleEmissionData(item){
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>CO2 Emissions</th>
+              <th>CO4 Emissions</th>
+              <th>N20 Emissions</th>
+              <th>GHG Emissions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].emissionData.co2}</td>
+            <td>{item.data[0].emissionData.ch4}</td>
+            <td>{item.data[0].emissionData.n20}</td>
+            <td>{item.data[0].emissionData.ghg}</td>
+          </tbody>
+        </table>
+      </div>)
+  }
+
+  function handleEnergyData(item){
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>Energy per capita</th>
+              <th>Energy per GHG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].energyData.energy_per_cap}</td>
+            <td>{item.data[0].energyData.energy_per_ghg}</td>
+          </tbody>
+        </table>
+      </div>)
+  }
+
+  function handleTemperatureData(item){
+    return(
+      <div>
+        <table className="year-table" style={{ marginTop: "20px" }}>
+          <thead>
+            <tr>
+              <th>Change GHG</th>
+              <th>Change CO2</th>
+              <th>Change CO4</th>
+              <th>Change N20</th>
+              <th>Share GHG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <td>{item.data[0].temperatureData.change_ghg}</td>
+            <td>{item.data[0].temperatureData.change_co2}</td>
+            <td>{item.data[0].temperatureData.change_ch4}</td>
+            <td>{item.data[0].temperatureData.change_n20}</td>
+            <td>{item.data[0].temperatureData.shares}</td>
+          </tbody>
+        </table>
+      </div>)
+  }
+
+  function handleOptions(item){
+
+    if(dataTypeForm==0){
+       return handleGeneralData(item)
+    } else
+    if(dataTypeForm==1){
+       return handleEmissionData(item)
+    } else
+    if(dataTypeForm==2){
+      return handleEnergyData(item)
+    } else
+    if(dataTypeForm==3){
+      return handleTemperatureData(item)
+    } else {
+      return (<div className="ISO-data">
+        
+      {handleGeneralData(item)}
+      {handleEmissionData(item)}
+      {handleEnergyData(item)}
+      {handleTemperatureData(item)}
+      </div>)
+    }
+  }
+
+  function handleDataTypeForm(event){
+    setDataTypeForm(event.target.value);
+  }
+
+
   return (
     <div>
       <h1>All Continents for year: {routeParams["year"]}</h1>
       <div className="FORM">
         <a style={{ fontWeight: "bold" }}>FILTER THE DATA</a>
         <form>
+          <label>
+            Datatype returned:
+            <select onChange={handleDataTypeForm}>
+              <option value="4">FullData</option>
+              <option value="0">General data</option>
+              <option value="1">Emission Data</option>
+              <option value="2">Energy Data</option>
+              <option value="3">Temperature Data</option>
+            </select>
+          </label>
           <label>
             Filter by:
             <select name="filter">
@@ -101,41 +224,17 @@ function ContinentsYearYear() {
       </div>
 
       <table className="year-table">
-        <thead>
+      <thead>
           <tr>
             <th>Name</th>
-            <th>GDP</th>
-            <th>Population</th>
-            <th>CO2 Emissions</th>
-            <th>CO4 Emissions</th>
-            <th>N20 Emissions</th>
-            <th>GHG Emissions</th>
-            <th>Energy per capita</th>
-            <th>Energy per GHG</th>
-            <th>Change GHG</th>
-            <th>Change CO2</th>
-            <th>Change CO4</th>
-            <th>Change N20</th>
-            <th>Share GHG</th>
+            <th>Data</th>
           </tr>
         </thead>
         <tbody>
           {currentItems.map((item, index) => (
             <tr key={index}>
               <td onClick={() => goRouteName(item.name)}>{item.name}</td>
-              <td>{item.data[0].generalData.gdp}</td>
-              <td>{item.data[0].generalData.population}</td>
-              <td>{item.data[0].emissionData.co2}</td>
-              <td>{item.data[0].emissionData.ch4}</td>
-              <td>{item.data[0].emissionData.n20}</td>
-              <td>{item.data[0].emissionData.ghg}</td>
-              <td>{item.data[0].energyData.energy_per_cap}</td>
-              <td>{item.data[0].energyData.energy_per_ghg}</td>
-              <td>{item.data[0].temperatureData.change_ghg}</td>
-              <td>{item.data[0].temperatureData.change_co2}</td>
-              <td>{item.data[0].temperatureData.change_ch4}</td>
-              <td>{item.data[0].temperatureData.change_n20}</td>
-              <td>{item.data[0].temperatureData.shares}</td>
+              {handleOptions(item)}
             </tr>
           ))}
         </tbody>
