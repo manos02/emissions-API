@@ -10,6 +10,7 @@ function CountriesYY() {
   const routeParams = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const [dataTypeForm, setDataTypeForm] = useState(4);
 
   const navigate = useNavigate();
 
@@ -33,6 +34,71 @@ function CountriesYY() {
     }
   }
 
+  function handleGeneralData(item){
+    return(<div className="section">
+    <h3>General Data:</h3>
+    <p>GDP: {item.data[0].generalData.gdp}</p>
+    <p>Population: {item.data[0].generalData.population}</p>
+  </div>)
+  }
+
+  function handleEmissionData(item){
+    return(<div className="section">
+    <h3>Emission Data:</h3>
+    <p>CO2: {item.data[0].emissionData.co2}</p>
+    <p>CH4: {item.data[0].emissionData.ch4}</p>
+    <p>N20: {item.data[0].emissionData.n20}</p>
+    <p>Total ghg: {item.data[0].emissionData.ghg}</p>
+  </div>)
+  }
+
+  function handleEnergyData(item){
+    return(<div className="section">
+    <h3>Energy Data:</h3>
+    <p>Energy_per_cap: {item.data[0].energyData.energy_per_cap}</p>
+    <p>Energy_per_ghg: {item.data[0].energyData.energy_per_ghg}</p>
+  </div>)
+  }
+
+  function handleTemperatureData(item){
+    return(<div className="section">
+    <h3>Temperature Data:</h3>
+    <p>Change ghg: {item.data[0].temperatureData.change_ghg}</p>
+    <p>Change co2: {item.data[0].temperatureData.change_co2}</p>
+    <p>Change ch4: {item.data[0].temperatureData.change_ch4}</p>
+    <p>Change n20: {item.data[0].temperatureData.change_n20}</p>
+    <p>Shares: {item.data[0].temperatureData.shares}</p>
+  </div>)
+  }
+
+  function handleOptions(item){
+
+    if(dataTypeForm==0){
+       return handleGeneralData(item)
+    } else
+    if(dataTypeForm==1){
+       return handleEmissionData(item)
+    } else
+    if(dataTypeForm==2){
+      return handleEnergyData(item)
+    } else
+    if(dataTypeForm==3){
+      return handleTemperatureData(item)
+    } else {
+      return (<div className="ISO-data">
+        
+      {handleGeneralData(item)}
+      {handleEmissionData(item)}
+      {handleEnergyData(item)}
+      {handleTemperatureData(item)}
+      </div>)
+    }
+  }
+
+  function handleDataTypeForm(event){
+    setDataTypeForm(event.target.value);
+  }
+
   componentDidMount();
 
     return (
@@ -41,6 +107,16 @@ function CountriesYY() {
         <div className="FORM">
           <a>FILTER THE DATA</a>
         <form>
+        <label>
+          Datatype returned:
+          <select onChange={handleDataTypeForm}>
+            <option value="4">FullData</option>
+            <option value="0">General data</option>
+            <option value="1">Emission Data</option>
+            <option value="2">Energy Data</option>
+            <option value="3">Temperature Data</option>
+          </select>
+        </label>
         <label>
           Filter by:
           <select name="filter">
@@ -81,34 +157,9 @@ function CountriesYY() {
             <h2 onClick={()=> goRouteISO(item.iso)}>Name: {item.name}</h2>
             <h2 onClick={()=> goRouteISO(item.iso)}>ISO: {item.iso}</h2>
 
-            <div className="section">
-              <h3>General Data:</h3>
-              <p>GDP: {item.data[0].generalData.gdp}</p>
-              <p>Population: {item.data[0].generalData.population}</p>
-            </div>
+            {handleOptions(item)}
+            
 
-            <div className="section">
-              <h3>Emission Data:</h3>
-              <p>CO2: {item.data[0].emissionData.co2}</p>
-              <p>CH4: {item.data[0].emissionData.ch4}</p>
-              <p>N20: {item.data[0].emissionData.n20}</p>
-              <p>Total ghg: {item.data[0].emissionData.ghg}</p>
-            </div>
-
-            <div className="section">
-              <h3>Energy Data:</h3>
-              <p>Energy_per_cap: {item.data[0].energyData.energy_per_cap}</p>
-              <p>Energy_per_ghg: {item.data[0].energyData.energy_per_ghg}</p>
-            </div>
-
-            <div className="section">
-              <h3>Temperature Data:</h3>
-              <p>Change ghg: {item.data[0].temperatureData.change_ghg}</p>
-              <p>Change co2: {item.data[0].temperatureData.change_co2}</p>
-              <p>Change ch4: {item.data[0].temperatureData.change_ch4}</p>
-              <p>Change n20: {item.data[0].temperatureData.change_n20}</p>
-              <p>Shares: {item.data[0].temperatureData.shares}</p>
-            </div>
           </div>
         ))}
       </div>
