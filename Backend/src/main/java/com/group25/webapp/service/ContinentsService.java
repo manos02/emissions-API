@@ -299,7 +299,7 @@ public class ContinentsService {
             Collections.reverse(dataList);
         }
         if (offset != null) {
-            if (offset > dataList.size()) {
+            if (offset > dataList.size() || offset < 0 ) {
                 throw new WrongQueryException();
             }
             dataList = ListManipulation.applyOffset(dataList, offset);
