@@ -93,7 +93,7 @@ function CountriesYear() {
 
     function handleError(){
       return (<div>
-        <h> No entry for {isoString} with year {yearString} :(</h>
+        <a> No entry for {isoString} with year {yearString} :(</a>
       </div>);
     }
 
@@ -599,7 +599,7 @@ function CountriesYear() {
         {countryYear.year && <h2>Year: {countryYear.year}</h2>}
 
         <div className="FORM">
-          <h>Choose what information you want to see. </h>
+          <a>Choose what information you want to see. </a>
       <form>
         <label>
           Datatype returned:
@@ -616,7 +616,7 @@ function CountriesYear() {
       </div>
 
       <div className="FORM">
-      <h>MODIFY DATA</h>
+      <a>MODIFY DATA</a>
 
 
         <form>
@@ -672,7 +672,7 @@ function CountriesYear() {
           Shares of modified data:
           <input type="text" placeholder="Enter shares" onChange={handleShares}></input>
         </label>
-        <select onChange={handlePut}>
+        <select onChange={handlePut} value="Not Submitting">
             <option>Not Submitting</option>
             <option>Submitting</option>
           </select>

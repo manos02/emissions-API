@@ -13,13 +13,6 @@ class ContinentsNameService {
     const url = `http://localhost:51417/continents/${nameString}`;
     return axios.post(url, 
       data)
-    .then((response) => {
-    console.log(response);
-    return response;
-    })
-    .catch((error) => {
-        console.log(error.response.data);
-    });
   }
 
 }

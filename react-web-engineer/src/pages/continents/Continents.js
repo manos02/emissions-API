@@ -37,10 +37,10 @@ function Continents() {
     return (
     <div>
       <div>
-        <h1>Continents</h1>
+        <h2>Continents</h2>
         
         <div className="FORM">
-          <h>FILTER THE DATA</h>
+          <a>FILTER THE DATA</a>
         <form>
         <label>
           Order:

@@ -57,11 +57,19 @@ function CountriesISO(){
     setFormData({population: formData.population, gdp: event.target.value, year:formData.year});
   }
 
-  function handlePost(){
+  async function handlePost() {
     if(formData.year!==null&&formData.year!==undefined&&formData.year!==""&&formData.year>=0){
-      const response = CountriesISOService.postCountriesISO(params, formData);
-      
+      try{
+      const response = await CountriesISOService.postCountriesISO(params, formData);
       setFormData({population: null, gdp: null, year:null});
+      }catch (error){
+        
+        if (error.message==="Request failed with status code 400"){
+          alert(`${error.message}. Please enter proper query parameters :)`)
+        } else{
+          alert(`${error.message}. Please fix before proceeding.`)
+        }
+      }
     } else {
       alert("please enter valid year");
     }
@@ -201,7 +209,7 @@ function CountriesISO(){
         <h1>{country.name}</h1>
 
         <div className="FORM">
-          <h>FILTER THE DATA</h>
+          <a>FILTER THE DATA</a>
         <form>
         <label>
           Datatype returned:
@@ -241,7 +249,7 @@ function CountriesISO(){
       </div>
 
       <div className="FORM">
-        <h>CREATE NEW DATA ENTRY</h>
+        <a>CREATE NEW DATA ENTRY</a>
       <form>
         <label>
           Year of new data:
@@ -255,7 +263,7 @@ function CountriesISO(){
           GDP of new data:
           <input type="text" placeholder="Enter gdp" onChange={handleGDP}></input>
         </label>
-        <select onChange={handlePost}>
+        <select onChange={handlePost} value="Not Submitting">
             <option>Not Submitting</option>
             <option>Submitting</option>
           </select>

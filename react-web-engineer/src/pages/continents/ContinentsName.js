@@ -81,11 +81,18 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
     setYear(event.target.value)
   }
 
-  function handlePost(event){
+  async function handlePost(event){
     if(year!==null&&year!==undefined&&year!==""&&year>=0){
-      const response = ContinentsNameService.postContinentsName(params, year);
-      
+      try{
+      const response = await ContinentsNameService.postContinentsName(params, year);
       setYear(null);
+      } catch(error){
+        if (error.message==="Request failed with status code 400"){
+          alert(`${error.message}. Please enter proper query parameters :)`)
+        } else{
+          alert(`${error.message}. Please fix before proceeding.`)
+        }
+      }
     } else {
       alert("please enter valid year");
     }
@@ -194,7 +201,7 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
     <div>
       <h1>{continent.name}</h1>
       <div className="FORM">
-        <h>FILTER THE DATA</h>
+        <a>FILTER THE DATA</a>
       <form>
         <label>
           Datatype returned:
@@ -234,13 +241,13 @@ const [dataTypeForm, setDataTypeForm] = useState(4);
       </div>
 
       <div className="FORM">
-      <h>CREATE NEW DATA ENTRY</h>
+      <a>CREATE NEW DATA ENTRY</a>
       <form>
         <label>
           Year of new data:
           <input type="text" placeholder="Enter year" onChange={handleYear} required={true}></input>
         </label>
-        <select onChange={handlePost}>
+        <select onChange={handlePost} value="Not Submitting">
             <option>Not Submitting</option>
             <option>Submitting</option>
           </select>

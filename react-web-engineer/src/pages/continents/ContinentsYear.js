@@ -80,7 +80,7 @@ var yearString = params["year"];
 
 function handleError(){
   return (<div>
-    <h> No entry for {nameString} with year {yearString} :(</h>
+    <a> No entry for {nameString} with year {yearString} :(</a>
   </div>);
 }
 
@@ -618,7 +618,7 @@ function handlePut(){
   </div>
 
   <div className="FORM">
-      <h>MODIFY DATA</h>
+      <a>MODIFY DATA</a>
 
 
         <form>
@@ -674,7 +674,7 @@ function handlePut(){
           Shares of modified data:
           <input type="text" placeholder="Enter shares" onChange={handleShares}></input>
         </label>
-        <select onChange={handlePut}>
+        <select onChange={handlePut} value="Not Submitting">
             <option>Not Submitting</option>
             <option>Submitting</option>
           </select>

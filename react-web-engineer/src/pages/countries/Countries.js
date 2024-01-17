@@ -42,7 +42,7 @@ function Countries() {
 
       <h1>Countries</h1>
       <div className="FORM">
-        <h>FILTER THE DATA</h>
+        <a>FILTER THE DATA</a>
       <form>
         <label>
           Filter by:

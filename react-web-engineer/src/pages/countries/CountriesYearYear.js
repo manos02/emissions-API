@@ -39,7 +39,7 @@ function CountriesYY() {
       <div>
         <h2>All Countries for year: {routeParams["year"]}</h2>
         <div className="FORM">
-          <h>FILTER THE DATA</h>
+          <a>FILTER THE DATA</a>
         <form>
         <label>
           Filter by:
@@ -65,11 +65,11 @@ function CountriesYY() {
           <input type="text" name="offset" placeholder="Enter offset"></input>
         </label>
         <label>
-          Lower bound year:
+          Lower bound population:
           <input type="text" name="lower" placeholder="Enter lower bound"></input>
         </label>
         <label>
-          Upper bound year:
+          Upper bound population:
           <input type="text" name="upper" placeholder="Enter upper bound"></input>
         </label>
         <input type="submit" value="Submit" />
