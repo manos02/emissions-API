@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.2.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:?}
+      MYSQL_DATABASE: ${DATABASE_NAME:?}
+      MYSQL_USER: ${DATABASE_USER:?}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:?}
+    ports:
+      - ${DATABASE_PORT:-3306}:3306
+    volumes:
+      - ./data:/var/lib/mysql
+    restart: always
+
+  react-app:
+    build:
+      context: ./react-web-engineer
+    ports:
+      - ${FRONTEND_PORT:?}:3000
+    environment:
+      - http://localhost:${BACKEND_PORT}
+
+  backend-spring:
+    build:
+      context: ./Backend
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/emissions?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+    ports:
+      - ${BACKEND_PORT:?}:51417

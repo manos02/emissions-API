@@ -1,0 +1,100 @@
+SummaryData:
+  type: object
+  required:
+    - "name"
+    - "iso"
+    - "data"
+  properties:
+    name:
+      type: string
+    data:
+        type: array
+        items:
+          $ref: "#/Data"
+    iso:
+      type: string
+
+
+Data:
+  type: object
+  required:
+    - "year"
+  properties:
+    year:
+      type: integer
+    emissionData:
+      $ref: "#/EmissionData"
+    energyData:
+      $ref: "#/EnergyData"
+    generalData:
+      $ref: "#/GeneralData"
+    temperatureData:
+      $ref: "#/TemperatureData"
+        
+
+GeneralData:
+  type: object
+  properties:
+    population:
+      type: integer
+    gdp:
+      type: number
+    year:
+      type: integer
+
+EmissionData:
+  type: object
+  properties:
+    co2:
+      type: number
+    ch4:
+      type: number
+    n20:
+      type: number
+    ghg:
+      type: number
+    year:
+      type: integer
+    
+TemperatureData:
+  type: object
+  properties:
+    shares:
+      type: number
+    change_ch4:
+      type: number
+    change_n20:
+      type: number
+    change_co2:
+      type: number
+    change_ghg:
+      type: number
+    year:
+      type: integer
+
+EnergyData:
+  type: object
+  properties:
+    energy_per_cap:
+      type: number
+    energy_per_ghg:
+      type: number
+    year:
+      type: integer
+
+CountryFilterKeysAlpha:
+  type: string
+  enum:
+    - descending
+
+CountryFilterKeysIsoName:
+  type: string
+  enum:
+    - ISO
+    - name
+    - shareghg
+
+DataFilterKeys:
+  type: int
+  enum:
+    - year
